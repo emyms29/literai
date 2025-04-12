@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import FeaturesDropdown from './FeaturesDropdown';
 
 const Navbar = () => {
   return (
@@ -18,12 +19,7 @@ const Navbar = () => {
             </Link>
           </div>
           <div className="flex items-center space-x-4">
-            <Link to="/features" className="text-gray-600 hover:text-primary transition-colors">
-              Features
-            </Link>
-            <Link to="/about" className="text-gray-600 hover:text-primary transition-colors">
-              About
-            </Link>
+            <FeaturesDropdown />
             <button className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors">
               Get Started
             </button>
