@@ -91,7 +91,7 @@ function App() {
                       className="text-center mb-16"
                     >
                       <h2 className="text-3xl font-bold text-gray-900 mb-4">Making a Difference</h2>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div className="max-w-2xl mx-auto">
                         <div className="bg-gray-50 p-8 rounded-xl">
                           <h3 className="text-2xl font-semibold mb-4">For Students</h3>
                           <ul className="space-y-4 text-left">
@@ -103,18 +103,9 @@ function App() {
                               <span className="text-primary mr-2">✓</span>
                               <span>Develop strong literacy skills at their own pace</span>
                             </li>
-                          </ul>
-                        </div>
-                        <div className="bg-gray-50 p-8 rounded-xl">
-                          <h3 className="text-2xl font-semibold mb-4">For Educators</h3>
-                          <ul className="space-y-4 text-left">
                             <li className="flex items-start">
                               <span className="text-primary mr-2">✓</span>
-                              <span>Track student progress with detailed analytics</span>
-                            </li>
-                            <li className="flex items-start">
-                              <span className="text-primary mr-2">✓</span>
-                              <span>Access ready-to-use resources and lesson plans</span>
+                              <span>Engage with interactive AI-powered learning tools</span>
                             </li>
                           </ul>
                         </div>

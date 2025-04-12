@@ -328,8 +328,8 @@ const StoryPromptGenerator: React.FC = () => {
         console.error('Speech recognition error:', event.error);
         if (event.error === 'no-speech' || event.error === 'aborted') {
           // These errors are expected and can be ignored
-          return;
-        }
+        return;
+      }
         setError('Speech recognition error. Please try again.');
         resetRecording();
       };
@@ -607,30 +607,30 @@ const StoryPromptGenerator: React.FC = () => {
       <div className="bg-white rounded-xl shadow-lg p-6">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Story Prompt Generator</h2>
         
-        {/* Reading Level Selector */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Select Reading Level
-          </label>
-          <div className="grid grid-cols-3 gap-4">
-            {READING_LEVELS.map(level => (
-              <motion.button
-                key={level.id}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => setSelectedLevel(level.id)}
-                className={`p-3 rounded-lg border-2 transition-colors ${
-                  selectedLevel === level.id
-                    ? 'border-primary bg-primary/10 text-primary'
-                    : 'border-gray-200 hover:border-primary/50'
-                }`}
-              >
-                <span className="block font-medium">{level.label}</span>
-                <span className="block text-sm text-gray-500">{level.description}</span>
-              </motion.button>
-            ))}
-          </div>
+      {/* Reading Level Selector */}
+      <div className="mb-6">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Select Reading Level
+        </label>
+        <div className="grid grid-cols-3 gap-4">
+          {READING_LEVELS.map(level => (
+            <motion.button
+              key={level.id}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setSelectedLevel(level.id)}
+              className={`p-3 rounded-lg border-2 transition-colors ${
+                selectedLevel === level.id
+                  ? 'border-primary bg-primary/10 text-primary'
+                  : 'border-gray-200 hover:border-primary/50'
+              }`}
+            >
+              <span className="block font-medium">{level.label}</span>
+              <span className="block text-sm text-gray-500">{level.description}</span>
+            </motion.button>
+          ))}
         </div>
+      </div>
 
         {/* Topic Selector */}
         <div className="mb-6">
@@ -639,7 +639,7 @@ const StoryPromptGenerator: React.FC = () => {
           </label>
           <div className="grid grid-cols-4 gap-3">
             {TOPICS.map(topic => (
-              <motion.button
+      <motion.button
                 key={topic}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -651,7 +651,7 @@ const StoryPromptGenerator: React.FC = () => {
                 }`}
               >
                 <span className="block font-medium capitalize">{topic}</span>
-              </motion.button>
+      </motion.button>
             ))}
           </div>
         </div>
@@ -665,54 +665,54 @@ const StoryPromptGenerator: React.FC = () => {
           {isGenerating ? 'Generating...' : 'Generate New Prompt'}
         </button>
 
-        <AnimatePresence mode="wait">
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="mt-4 p-4 bg-red-100 text-red-700 rounded-lg"
-            >
-              {error}
-            </motion.div>
-          )}
+      <AnimatePresence mode="wait">
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="mt-4 p-4 bg-red-100 text-red-700 rounded-lg"
+          >
+            {error}
+          </motion.div>
+        )}
 
           {currentPrompt && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
               className="mt-8 p-6 bg-gray-50 rounded-lg"
-            >
+          >
               <div className="flex items-center justify-between mb-4">
-                <div>
-                  <span className="inline-block px-3 py-1 bg-accent/10 text-accent rounded-full text-sm font-medium">
+              <div>
+                <span className="inline-block px-3 py-1 bg-accent/10 text-accent rounded-full text-sm font-medium">
                     {READING_LEVELS.find(l => l.id === currentPrompt.readingLevel)?.label}
-                  </span>
-                  <span className="ml-2 inline-block px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium">
+                </span>
+                <span className="ml-2 inline-block px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium">
                     {currentPrompt.topic}
-                  </span>
-                </div>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={handleReadAloud}
-                  className="text-primary hover:text-primary/80 transition-colors"
-                >
-                  {isSpeaking ? (
-                    <span className="flex items-center">
-                      <span className="mr-2">■</span>
-                      Stop Reading
-                    </span>
-                  ) : (
-                    <span className="flex items-center">
-                      <span className="mr-2">▶</span>
-                      Read Aloud
-                    </span>
-                  )}
-                </motion.button>
+                </span>
               </div>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleReadAloud}
+                className="text-primary hover:text-primary/80 transition-colors"
+              >
+                {isSpeaking ? (
+                  <span className="flex items-center">
+                    <span className="mr-2">■</span>
+                    Stop Reading
+                  </span>
+                ) : (
+                  <span className="flex items-center">
+                    <span className="mr-2">▶</span>
+                    Read Aloud
+                  </span>
+                )}
+              </motion.button>
+            </div>
               <p className="text-xl text-gray-900">{currentPrompt.prompt}</p>
 
               {/* Speech Recording Section */}
@@ -863,9 +863,9 @@ const StoryPromptGenerator: React.FC = () => {
                   </motion.div>
                 )}
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+          </motion.div>
+        )}
+      </AnimatePresence>
       </div>
     </div>
   );

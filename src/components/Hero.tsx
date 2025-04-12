@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 const Hero = () => {
   return (
@@ -28,11 +29,14 @@ const Hero = () => {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="flex justify-center space-x-4"
           >
-            <button className="bg-primary text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-primary/90 transition-colors">
+            <Link 
+              to="/features" 
+              className="bg-primary text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-primary/90 transition-colors"
+            >
               Start Learning
-            </button>
+            </Link>
             <button className="bg-white text-primary px-8 py-3 rounded-lg text-lg font-semibold border-2 border-primary hover:bg-primary/10 transition-colors">
-              Watch Demo
+              Demo
             </button>
           </motion.div>
         </div>

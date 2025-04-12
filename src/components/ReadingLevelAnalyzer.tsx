@@ -303,9 +303,9 @@ const ReadingLevelAnalyzer: React.FC = () => {
       {/* Generate Passage Button */}
       {!selectedPassage && (
         <div className="mb-8 text-center">
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+      <motion.button
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
             onClick={generatePassage}
             disabled={isLoading}
             className={`px-6 py-3 bg-primary text-white rounded-xl font-medium hover:bg-primary/90 transition-colors text-lg ${
@@ -313,19 +313,19 @@ const ReadingLevelAnalyzer: React.FC = () => {
             }`}
           >
             {isLoading ? (
-              <span className="flex items-center justify-center">
-                <motion.span
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                  className="inline-block w-6 h-6 border-2 border-white border-t-transparent rounded-full mr-2"
-                />
+          <span className="flex items-center justify-center">
+            <motion.span
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              className="inline-block w-6 h-6 border-2 border-white border-t-transparent rounded-full mr-2"
+            />
                 Generating...
-              </span>
-            ) : (
+          </span>
+        ) : (
               'Generate Passage'
-            )}
-          </motion.button>
-          {error && (
+        )}
+      </motion.button>
+      {error && (
             <p className="mt-4 text-red-600">{error}</p>
           )}
         </div>
@@ -402,12 +402,12 @@ const ReadingLevelAnalyzer: React.FC = () => {
                           Try Again
                         </motion.button>
                       )}
-                    </div>
+              </div>
                   )}
                 </div>
               </div>
             ))}
-          </div>
+                </div>
 
           {/* Generate New Passage Button */}
           <div className="mt-8 text-center">

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -16,12 +15,6 @@ const Navbar: React.FC = () => {
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
               <Link
-                to="/features"
-                className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900 hover:text-primary"
-              >
-                Features
-              </Link>
-              <Link
                 to="/story-prompt"
                 className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900 hover:text-primary"
               >
@@ -37,12 +30,12 @@ const Navbar: React.FC = () => {
                 to="/analyzer"
                 className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900 hover:text-primary"
               >
-                Reading Analyzer
+                Reading Comprehension
               </Link>
             </div>
           </div>
         </div>
-      </div>w
+      </div>
     </nav>
   );
 };

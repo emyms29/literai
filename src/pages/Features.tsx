@@ -17,8 +17,8 @@ const Features = () => {
       icon: '🎮'
     },
     {
-      title: 'Reading Level Analyzer',
-      description: 'Get instant feedback on your reading level and progress.',
+      title: 'Reading Comprehension',
+      description: 'Learn to analyze passages with the help of AI.',
       path: '/analyzer',
       icon: '📊'
     }

@@ -101,7 +101,7 @@ const EMOJIS: Emoji[] = [
   { id: 'jet', emoji: '✈️', matched: false, wordId: 'jet', difficulty: 1 },
   { id: 'key', emoji: '🔑', matched: false, wordId: 'key', difficulty: 1 },
   { id: 'leg', emoji: '🦵', matched: false, wordId: 'leg', difficulty: 1 },
-  { id: 'net', emoji: '🏐', matched: false, wordId: 'net', difficulty: 1 },
+  { id: 'ball', emoji: '🏐', matched: false, wordId: 'ball', difficulty: 1 },
   { id: 'pig', emoji: '🐷', matched: false, wordId: 'pig', difficulty: 1 },
   { id: 'rat', emoji: '🐀', matched: false, wordId: 'rat', difficulty: 1 },
   { id: 'sun', emoji: '☀️', matched: false, wordId: 'sun', difficulty: 1 },
@@ -117,7 +117,7 @@ const EMOJIS: Emoji[] = [
   { id: 'crown', emoji: '👑', matched: false, wordId: 'crown', difficulty: 2 },
   { id: 'dress', emoji: '👗', matched: false, wordId: 'dress', difficulty: 2 },
   { id: 'eagle', emoji: '🦅', matched: false, wordId: 'eagle', difficulty: 2 },
-  { id: 'fence', emoji: '🌳', matched: false, wordId: 'fence', difficulty: 2 },
+  { id: 'tree', emoji: '🌳', matched: false, wordId: 'tree', difficulty: 2 },
   { id: 'ghost', emoji: '👻', matched: false, wordId: 'ghost', difficulty: 2 },
   { id: 'house', emoji: '🏠', matched: false, wordId: 'house', difficulty: 2 },
   { id: 'snow', emoji: '❄️', matched: false, wordId: 'snow', difficulty: 2 },
@@ -125,7 +125,7 @@ const EMOJIS: Emoji[] = [
   { id: 'kite', emoji: '🪁', matched: false, wordId: 'kite', difficulty: 2 },
   { id: 'lemon', emoji: '🍋', matched: false, wordId: 'lemon', difficulty: 2 },
   { id: 'mouse', emoji: '🐭', matched: false, wordId: 'mouse', difficulty: 2 },
-  { id: 'night', emoji: '🌙', matched: false, wordId: 'night', difficulty: 2 },
+  { id: 'moon', emoji: '🌙', matched: false, wordId: 'moon', difficulty: 2 },
   { id: 'ocean', emoji: '🌊', matched: false, wordId: 'ocean', difficulty: 2 },
   { id: 'piano', emoji: '🎹', matched: false, wordId: 'piano', difficulty: 2 },
   { id: 'queen', emoji: '👸', matched: false, wordId: 'queen', difficulty: 2 },
@@ -135,9 +135,9 @@ const EMOJIS: Emoji[] = [
   { id: 'umbrella', emoji: '☔', matched: false, wordId: 'umbrella', difficulty: 2 },
   { id: 'violin', emoji: '🎻', matched: false, wordId: 'violin', difficulty: 2 },
   { id: 'whale', emoji: '🐋', matched: false, wordId: 'whale', difficulty: 2 },
-  { id: 'xylophone', emoji: '🎼', matched: false, wordId: 'xylophone', difficulty: 2 },
-  { id: 'yacht', emoji: '⛵', matched: false, wordId: 'yacht', difficulty: 2 },
-  { id: 'zebra', emoji: '🦓', matched: false, wordId: 'zebra', difficulty: 2 },
+  { id: 'music', emoji: '🎼', matched: false, wordId: 'music', difficulty: 2 },
+  { id: 'boat', emoji: '⛵', matched: false, wordId: 'boat', difficulty: 2 },
+  { id: 'horse', emoji: '🦓', matched: false, wordId: 'horse', difficulty: 2 },
 
   // Hard words (7+ letters)
   { id: 'airplane', emoji: '✈️', matched: false, wordId: 'airplane', difficulty: 3 },
@@ -148,7 +148,7 @@ const EMOJIS: Emoji[] = [
   { id: 'giraffe', emoji: '🦒', matched: false, wordId: 'giraffe', difficulty: 3 },
   { id: 'helicopter', emoji: '🚁', matched: false, wordId: 'helicopter', difficulty: 3 },
   { id: 'icecream', emoji: '🍦', matched: false, wordId: 'icecream', difficulty: 3 },
-  { id: 'jellyfish', emoji: '🎐', matched: false, wordId: 'jellyfish', difficulty: 3 },
+  { id: 'jellyfish', emoji: '🪼', matched: false, wordId: 'jellyfish', difficulty: 3 },
   { id: 'kangaroo', emoji: '🦘', matched: false, wordId: 'kangaroo', difficulty: 3 },
   { id: 'lighthouse', emoji: '🗼', matched: false, wordId: 'lighthouse', difficulty: 3 },
   { id: 'mushroom', emoji: '🍄', matched: false, wordId: 'mushroom', difficulty: 3 },
@@ -159,11 +159,11 @@ const EMOJIS: Emoji[] = [
   { id: 'rainbow', emoji: '🌈', matched: false, wordId: 'rainbow', difficulty: 3 },
   { id: 'scissors', emoji: '✂️', matched: false, wordId: 'scissors', difficulty: 3 },
   { id: 'telescope', emoji: '🔭', matched: false, wordId: 'telescope', difficulty: 3 },
-  { id: 'unicycle', emoji: '🚲', matched: false, wordId: 'unicycle', difficulty: 3 },
+  { id: 'bicycle', emoji: '🚲', matched: false, wordId: 'bicycle', difficulty: 3 },
   { id: 'volcano', emoji: '🌋', matched: false, wordId: 'volcano', difficulty: 3 },
   { id: 'watermelon', emoji: '🍉', matched: false, wordId: 'watermelon', difficulty: 3 },
-  { id: 'yogurt', emoji: '🥛', matched: false, wordId: 'yogurt', difficulty: 3 },
-  { id: 'zucchini', emoji: '🥒', matched: false, wordId: 'zucchini', difficulty: 3 }
+  { id: 'milk', emoji: '🥛', matched: false, wordId: 'milk', difficulty: 3 },
+  { id: 'cucumber', emoji: '🥒', matched: false, wordId: 'cucumber', difficulty: 3 }
 ];
 
 // Move shuffleArray function here, before the component
@@ -202,6 +202,7 @@ const PhonicsGame: React.FC = () => {
   const [currentRound, setCurrentRound] = useState<number>(0);
   const [roundsPerLevel, setRoundsPerLevel] = useState<number>(3);
   const [gameStats, setGameStats] = useState<{word: string, attempts: number}[]>([]);
+  const [showVictoryMessage, setShowVictoryMessage] = useState(false);
 
   // Filter words and emojis based on difficulty and ensure they match
   const getCurrentRoundItems = () => {
@@ -213,37 +214,77 @@ const PhonicsGame: React.FC = () => {
              (difficulty === 3 && wordLength > 6);
     });
 
-    // Get the slice of words for the current round (4 words per round)
-    const roundWords = filteredWords.slice(
+    // Get all matching emojis for the current difficulty
+    const filteredEmojis = EMOJIS.filter(emoji => 
+      filteredWords.some(word => word.id === emoji.wordId) && emoji.difficulty === difficulty
+    );
+
+    // Create pairs of words and emojis
+    const pairs = filteredWords
+      .filter(word => filteredEmojis.some(emoji => emoji.wordId === word.id))
+      .map(word => ({
+        word,
+        emoji: filteredEmojis.find(emoji => emoji.wordId === word.id)!
+      }));
+
+    // Shuffle the pairs and take 4 for this round
+    const shuffledPairs = shuffleArray(pairs).slice(
       currentRound * 4,
       (currentRound + 1) * 4
     );
 
-    // Get the corresponding emojis for these words
-    const roundEmojis = EMOJIS.filter(emoji => 
-      roundWords.some(word => word.id === emoji.wordId)
-    );
-
     return {
-      words: roundWords,
-      emojis: roundEmojis
+      words: shuffledPairs.map(pair => pair.word),
+      emojis: shuffledPairs.map(pair => pair.emoji)
     };
   };
 
-  // Update emojis when round changes
-  useEffect(() => {
-    if (gameStarted) {
-      const { emojis: newEmojis } = getCurrentRoundItems();
-      setEmojis(shuffleArray([...newEmojis]));
-    }
-  }, [currentRound, difficulty, gameStarted]);
+  // Store current round items
+  const [currentRoundItems, setCurrentRoundItems] = useState(() => getCurrentRoundItems());
 
-  const { words: currentRoundWords, emojis: currentRoundEmojis } = getCurrentRoundItems();
+  // Update round items only when round or difficulty changes
+  useEffect(() => {
+    setCurrentRoundItems(getCurrentRoundItems());
+  }, [currentRound, difficulty]);
+
+  // Remove the old useEffect and direct getCurrentRoundItems call
+  const currentRoundWords = currentRoundItems.words;
+  const currentRoundEmojis = currentRoundItems.emojis;
 
   useEffect(() => {
     localStorage.setItem('phonicsWords', JSON.stringify(words));
     localStorage.setItem('phonicsEmojis', JSON.stringify(emojis));
   }, [words, emojis]);
+
+  const getTimerDuration = () => {
+    switch (difficulty) {
+      case 1: return 240; // 4 minutes for easy
+      case 2: return 180; // 3 minutes for medium
+      case 3: return 5; // 5 seconds for hard
+      default: return 180;
+    }
+  };
+
+  const startGame = () => {
+    setGameStarted(true);
+    setTimeLeft(getTimerDuration());
+    setGameStats([]);
+    setCurrentRound(0);
+    setWords(WORDS.map(word => ({ ...word, matched: false })));
+    const { words: newWords, emojis: newEmojis } = getCurrentRoundItems();
+    setWords(prevWords => 
+      prevWords.map(word => ({
+        ...word,
+        matched: false,
+        selected: newWords.some(w => w.id === word.id)
+      }))
+    );
+    setEmojis(EMOJIS.map(emoji => ({
+      ...emoji,
+      matched: false,
+      selected: newEmojis.some(e => e.id === emoji.id)
+    })));
+  };
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -251,17 +292,32 @@ const PhonicsGame: React.FC = () => {
       timer = setInterval(() => {
         setTimeLeft(prev => prev - 1);
       }, 1000);
+    } else if (gameStarted && timeLeft === 0) {
+      // Time's up! End the current round
+      setShowVictoryMessage(true);
+      setShowConfetti(true);
+      setTimeout(() => setShowConfetti(false), 3000);
+      if (currentRound < roundsPerLevel - 1) {
+        setCurrentRound(prev => prev + 1);
+        setWords(WORDS.map(word => ({ ...word, matched: false })));
+        setSelectedWord(null);
+        setTimeLeft(getTimerDuration()); // Reset timer based on difficulty
+      } else {
+        // Game completed
+        setGameStarted(false);
+      }
     }
     return () => clearInterval(timer);
-  }, [gameStarted, timeLeft]);
+  }, [gameStarted, timeLeft, currentRound, roundsPerLevel, difficulty]);
 
   const handleWordClick = (wordId: string) => {
+    if (!gameStarted) return; // Prevent interaction if game hasn't started
     setSelectedWord(wordId);
     setIsError(false);
   };
 
   const handleEmojiClick = (emojiId: string) => {
-    if (!selectedWord) return;
+    if (!gameStarted || !selectedWord) return; // Prevent interaction if game hasn't started
 
     const word = currentRoundWords.find(w => w.id === selectedWord);
     const emoji = currentRoundEmojis.find(e => e.id === emojiId);
@@ -303,7 +359,7 @@ const PhonicsGame: React.FC = () => {
           setCurrentRound(prev => prev + 1);
           setWords(WORDS.map(word => ({ ...word, matched: false })));
           setSelectedWord(null);
-          setTimeLeft(300);
+          setTimeLeft(getTimerDuration());
         } else {
           // Game completed
           setGameStarted(false);
@@ -331,16 +387,6 @@ const PhonicsGame: React.FC = () => {
     setCurrentRound(0);
   };
 
-  const startGame = () => {
-    setGameStarted(true);
-    setTimeLeft(300);
-    setGameStats([]);
-    setCurrentRound(0);
-    setWords(WORDS.map(word => ({ ...word, matched: false })));
-    const { emojis: newEmojis } = getCurrentRoundItems();
-    setEmojis(shuffleArray([...newEmojis]));
-  };
-
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -356,18 +402,26 @@ const PhonicsGame: React.FC = () => {
     }
   };
 
+  // Update victory message condition
+  const shouldShowVictoryMessage = showVictoryMessage || 
+    (gameStarted && currentRoundWords.every(word => words.find(w => w.id === word.id)?.matched));
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-primary/5 to-secondary/5 p-4">
-      <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto">
         <div className="text-center mb-4">
           <h2 className="text-2xl font-bold text-gray-900">Word Match</h2>
-          <p className="text-gray-600">Click a word, then click the matching emoji!</p>
+          <p className="text-gray-600">
+            {gameStarted 
+              ? "Click a word, then click the matching emoji!" 
+              : "Click Start Game to begin!"}
+          </p>
         </div>
 
         {/* Timer and Controls */}
         <div className="flex justify-between items-center mb-4">
           <div className="text-xl font-bold">
-            Time: {formatTime(timeLeft)}
+            {gameStarted ? `Time: ${formatTime(timeLeft)}` : "Ready to play?"}
           </div>
           <div className="flex gap-2">
             {!gameStarted ? (
@@ -383,7 +437,7 @@ const PhonicsGame: React.FC = () => {
                 </select>
                 <button
                   onClick={startGame}
-                  className="bg-green-500 text-white px-4 py-2 rounded-lg"
+                  className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
                 >
                   Start Game
                 </button>
@@ -391,7 +445,7 @@ const PhonicsGame: React.FC = () => {
             ) : (
               <button
                 onClick={resetGame}
-                className="bg-primary text-white px-4 py-2 rounded-lg"
+                className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors"
               >
                 Reset
               </button>
@@ -408,17 +462,17 @@ const PhonicsGame: React.FC = () => {
           </div>
         )}
 
-        {/* AI Mascot */}
+          {/* AI Mascot */}
         <div className={`bg-white p-3 rounded-lg shadow mb-4 transition-colors duration-300 ${isError ? 'bg-red-100' : ''}`}>
-          <div className="flex items-center">
+              <div className="flex items-center">
             <div className={`w-12 h-12 rounded-full flex items-center justify-center mr-3 transition-colors duration-300 ${isError ? 'bg-red-200' : 'bg-primary/10'}`}>
               <span className="text-2xl">🤖</span>
-            </div>
-            <p className="text-gray-700">
+                </div>
+                  <p className="text-gray-700">
               {hint || "Hi! I'm your word helper. Click a word, then find the matching emoji!"}
-            </p>
-          </div>
-        </div>
+                  </p>
+                </div>
+              </div>
 
         {/* Game Area */}
         <div className="grid grid-cols-1 gap-4">
@@ -434,8 +488,14 @@ const PhonicsGame: React.FC = () => {
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={() => handleWordClick(word.id)}
-                    className={`px-4 py-2 flex items-center justify-center text-lg font-bold rounded-lg cursor-pointer
-                      ${selectedWord === word.id ? 'ring-2 ring-primary bg-primary text-white' : 'bg-gray-200 text-gray-500'}`}
+                    className={`px-4 py-2 flex items-center justify-center text-lg font-bold rounded-lg
+                      ${gameStarted 
+                        ? 'cursor-pointer' 
+                        : 'cursor-not-allowed opacity-50'}
+                      ${selectedWord === word.id 
+                        ? 'ring-2 ring-primary bg-primary text-white' 
+                        : 'bg-gray-200 text-gray-500'}`}
+                    disabled={!gameStarted}
                   >
                     {word.word}
                   </motion.button>
@@ -448,8 +508,8 @@ const PhonicsGame: React.FC = () => {
           <div className="bg-white p-4 rounded-lg shadow">
             <h3 className="text-lg font-semibold mb-2">Emojis</h3>
             <div className="grid grid-cols-4 gap-2">
-              {emojis
-                .filter(emoji => currentRoundEmojis.some(e => e.id === emoji.id) && !emoji.matched)
+              {currentRoundEmojis
+                .filter(emoji => !emoji.matched)
                 .map(emoji => (
                   <motion.button
                     key={emoji.id}
@@ -457,8 +517,11 @@ const PhonicsGame: React.FC = () => {
                     whileTap={{ scale: 0.95 }}
                     onClick={() => handleEmojiClick(emoji.id)}
                     className={`flex items-center justify-center p-4 rounded-lg text-3xl
-                      ${selectedWord ? 'cursor-pointer bg-gray-100 hover:bg-gray-200' : 'cursor-not-allowed bg-gray-50'}`}
-                    disabled={!selectedWord}
+                      ${gameStarted 
+                        ? 'cursor-pointer bg-gray-100 hover:bg-gray-200' 
+                        : 'cursor-not-allowed bg-gray-50 opacity-50'}
+                      ${!selectedWord && gameStarted ? 'cursor-not-allowed' : ''}`}
+                    disabled={!gameStarted || !selectedWord}
                   >
                     {emoji.emoji}
                   </motion.button>
@@ -470,17 +533,17 @@ const PhonicsGame: React.FC = () => {
         {/* Confetti */}
         <AnimatePresence>
           {showConfetti && (
-            <Confetti
-              width={window.innerWidth}
-              height={window.innerHeight}
-              recycle={false}
-              numberOfPieces={200}
-            />
+              <Confetti
+                width={window.innerWidth}
+                height={window.innerHeight}
+                recycle={false}
+                numberOfPieces={200}
+              />
           )}
         </AnimatePresence>
 
         {/* Victory Message */}
-        {currentRoundWords.every(word => words.find(w => w.id === word.id)?.matched) && (
+        {shouldShowVictoryMessage && (
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -499,13 +562,17 @@ const PhonicsGame: React.FC = () => {
                 transition={{ delay: 0.2 }}
                 className="text-6xl mb-4"
               >
-                🎉
+                {timeLeft === 0 ? "⏰" : "🎉"}
               </motion.div>
-              <h2 className="text-3xl font-bold text-primary mb-2">Great Job!</h2>
+              <h2 className="text-3xl font-bold text-primary mb-2">
+                {timeLeft === 0 ? "Time's Up!" : "Great Job!"}
+              </h2>
               <p className="text-xl text-gray-700 mb-4">
-                {currentRound === roundsPerLevel - 1 
-                  ? "You've completed all rounds!" 
-                  : `You've completed round ${currentRound + 1}!`}
+                {timeLeft === 0 
+                  ? "Let's try the next round!" 
+                  : currentRound === roundsPerLevel - 1 
+                    ? "You've completed all rounds!" 
+                    : `You've completed round ${currentRound + 1}!`}
               </p>
               {currentRound === roundsPerLevel - 1 && (
                 <div className="mb-6">
@@ -530,11 +597,12 @@ const PhonicsGame: React.FC = () => {
               <div className="flex justify-center gap-4">
                 <button
                   onClick={() => {
+                    setShowVictoryMessage(false);
                     if (currentRound < roundsPerLevel - 1) {
                       setCurrentRound(prev => prev + 1);
                       setWords(WORDS.map(word => ({ ...word, matched: false })));
                       setSelectedWord(null);
-                      setTimeLeft(300);
+                      setTimeLeft(getTimerDuration());
                     } else {
                       // Reset all game state
                       setGameStarted(false);
@@ -542,7 +610,7 @@ const PhonicsGame: React.FC = () => {
                       setWords(WORDS.map(word => ({ ...word, matched: false })));
                       setEmojis(EMOJIS.map(emoji => ({ ...emoji, matched: false })));
                       setSelectedWord(null);
-                      setTimeLeft(300);
+                      setTimeLeft(getTimerDuration());
                       setGameStats([]);
                     }
                   }}
