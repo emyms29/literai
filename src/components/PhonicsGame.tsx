@@ -206,7 +206,7 @@ const PhonicsGame: React.FC = () => {
 
   // Filter words and emojis based on difficulty and ensure they match
   const getCurrentRoundItems = () => {
-    // First, get all words for the current difficulty
+    // Get all words for the current difficulty
     const filteredWords = WORDS.filter(word => {
       const wordLength = word.id.length;
       return (difficulty === 1 && wordLength <= 4) ||
