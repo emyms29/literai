@@ -30,9 +30,9 @@ function App() {
                     >
                       <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Mission</h2>
                       <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                        LiterAI is dedicated to revolutionizing literacy education through artificial intelligence. 
-                        We believe every child deserves access to personalized, engaging, and effective learning tools 
-                        that adapt to their unique needs and learning style.
+                        LiterAI is dedicated to helping learners improve their reading and speaking skills through AI-powered practice. 
+                        Our interactive tools provide real-time feedback and personalized exercises to help you develop confidence and fluency 
+                        in your language abilities.
                       </p>
                     </motion.div>
                   </div>

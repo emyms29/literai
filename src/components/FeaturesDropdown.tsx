@@ -6,7 +6,7 @@ const features = [
   {
     title: 'AI Story Generator',
     path: '/features/story-generator',
-    description: 'Create personalized stories with AI',
+    description: 'Practice reading and speaking with AI feedback',
     icon: '📚',
   },
   {
