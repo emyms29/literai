@@ -41,7 +41,7 @@ const ReadingBuddy: React.FC<ReadingBuddyProps> = ({ lexileLevel }) => {
     6. Suggest books and reading materials at the appropriate level
     7. Break down complex concepts into simpler parts
     8. Use examples and analogies that a student at this level would understand
-    This should help the reader with conversation practice and improve their reading skills. Use casual daily language to improve their social interactions.`
+    This should help the reader with conversation practice and improve their reading skills. Use casual daily language to improve their social interactions. Say one thing at a time. You say something then the user says something back. Like a daily, normal conversations.`
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
