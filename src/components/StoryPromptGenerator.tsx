@@ -1,10 +1,35 @@
-<<<<<<< HEAD
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-
-=======
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+
+// Add type declarations for Web Speech API
+interface SpeechRecognitionEvent extends Event {
+  results: SpeechRecognitionResultList;
+  resultIndex: number;
+}
+
+interface SpeechRecognitionError extends Event {
+  error: string;
+  message: string;
+}
+
+interface SpeechRecognition extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  start(): void;
+  stop(): void;
+  abort(): void;
+  onresult: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => any) | null;
+  onerror: ((this: SpeechRecognition, ev: SpeechRecognitionError) => any) | null;
+  onend: ((this: SpeechRecognition, ev: Event) => any) | null;
+}
+
+declare global {
+  interface Window {
+    SpeechRecognition: new () => SpeechRecognition;
+    webkitSpeechRecognition: new () => SpeechRecognition;
+  }
+}
 
 interface WordAnalysis {
   word: string;
@@ -13,7 +38,6 @@ interface WordAnalysis {
   confidence: number;
 }
 
->>>>>>> 0e96a6b2d40a7bc29890e95aecad7a47b77a6584
 interface StoryPrompt {
   prompt: string;
   readingLevel: string;
@@ -21,18 +45,6 @@ interface StoryPrompt {
 }
 
 const READING_LEVELS = [
-<<<<<<< HEAD
-  { id: 'k-2', label: 'Grades K-2', description: 'Simple sentences, basic vocabulary' },
-  { id: '3-5', label: 'Grades 3-5', description: 'Intermediate vocabulary, more complex ideas' },
-  { id: '6-8', label: 'Grades 6-8', description: 'Advanced vocabulary, sophisticated themes' },
-];
-
-const TOPICS = [
-  'animals', 'space', 'ocean', 'magic', 'sports', 'friendship',
-  'adventure', 'mystery', 'science', 'history', 'art', 'music'
-];
-
-=======
   { id: 'beginner', label: 'Beginner', description: 'Simple vocabulary, short sentences' },
   { id: 'intermediate', label: 'Intermediate', description: 'Moderate vocabulary, compound sentences' },
   { id: 'advanced', label: 'Advanced', description: 'Complex vocabulary, varied sentence structures' },
@@ -279,155 +291,10 @@ const generatePrompt = (level: string, topic: string): string => {
   }
 };
 
->>>>>>> 0e96a6b2d40a7bc29890e95aecad7a47b77a6584
 // Cache for storing generated prompts
 const promptCache = new Map<string, StoryPrompt>();
 
 const StoryPromptGenerator: React.FC = () => {
-<<<<<<< HEAD
-  const [prompt, setPrompt] = useState<StoryPrompt | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [isSpeaking, setIsSpeaking] = useState(false);
-  const [selectedLevel, setSelectedLevel] = useState<string>('k-2');
-
-  const generatePrompt = async (level: string) => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      // Check cache first
-      const cacheKey = `${level}-${Date.now()}`;
-      const cachedPrompt = promptCache.get(cacheKey);
-      if (cachedPrompt) {
-        setPrompt(cachedPrompt);
-        setIsLoading(false);
-        return;
-      }
-
-      // Select a random topic
-      const topic = TOPICS[Math.floor(Math.random() * TOPICS.length)];
-
-      // First, let's get the list of available models
-      const modelsResponse = await fetch('https://generativelanguage.googleapis.com/v1/models', {
-        headers: {
-          'x-goog-api-key': import.meta.env.VITE_GEMINI_API_KEY
-        }
-      });
-
-      if (!modelsResponse.ok) {
-        throw new Error('Failed to fetch available models');
-      }
-
-      const modelsData = await modelsResponse.json();
-      console.log('Available models:', modelsData);
-
-      // Use the first available model that supports generateContent
-      const availableModel = modelsData.models?.find((model: any) => 
-        model.supportedGenerationMethods?.includes('generateContent')
-      );
-
-      if (!availableModel) {
-        throw new Error('No suitable model found');
-      }
-
-      console.log('Using model:', availableModel.name);
-
-      // Add retry logic for rate limiting
-      let retries = 3;
-      let lastError = null;
-
-      while (retries > 0) {
-        try {
-          console.log('Attempting API call, retries left:', retries);
-          const response = await fetch('https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'x-goog-api-key': import.meta.env.VITE_GEMINI_API_KEY
-            },
-            body: JSON.stringify({
-              contents: [{
-                parts: [{
-                  text: `Generate a ${level} story prompt about ${topic}. ${
-                    level === 'k-2' ? 'Use simple sentences and basic vocabulary.' :
-                    level === '3-5' ? 'Use intermediate vocabulary and more complex ideas.' :
-                    'Use advanced vocabulary and sophisticated themes.'
-                  }`
-                }]
-              }],
-              generationConfig: {
-                temperature: 0.7,
-                topP: 1,
-                topK: 40,
-                maxOutputTokens: 150,
-              }
-            })
-          });
-
-          console.log('API Response status:', response.status);
-          console.log('API Response headers:', Object.fromEntries(response.headers.entries()));
-          
-          if (response.status === 429) {
-            const retryAfter = response.headers.get('Retry-After') || '5';
-            console.log('Rate limited, waiting for:', retryAfter, 'seconds');
-            await new Promise(resolve => setTimeout(resolve, parseInt(retryAfter) * 1000));
-            retries--;
-            continue;
-          }
-
-          if (!response.ok) {
-            const errorText = await response.text();
-            console.error('API Error Response:', errorText);
-            let errorMessage = `API error: ${response.status} ${response.statusText}`;
-            try {
-              const errorData = JSON.parse(errorText);
-              errorMessage += ` - ${errorData.error?.message || errorData.error || ''}`;
-            } catch (e) {
-              errorMessage += ` - ${errorText}`;
-            }
-            throw new Error(errorMessage);
-          }
-
-          const data = await response.json();
-          console.log('API Response data:', data);
-          
-          if (!data.candidates?.[0]?.content?.parts?.[0]?.text) {
-            throw new Error('Invalid API response format');
-          }
-
-          const generatedPrompt = data.candidates[0].content.parts[0].text.trim();
-
-          const newPrompt: StoryPrompt = {
-            prompt: generatedPrompt,
-            readingLevel: level,
-            topic
-          };
-
-          // Cache the prompt
-          promptCache.set(cacheKey, newPrompt);
-          setPrompt(newPrompt);
-          return;
-        } catch (err) {
-          console.error('Attempt failed:', err);
-          lastError = err;
-          retries--;
-          if (retries > 0) {
-            console.log('Retrying in 2 seconds...');
-            await new Promise(resolve => setTimeout(resolve, 2000));
-          }
-        }
-      }
-
-      console.error('All retries failed. Last error:', lastError);
-      throw lastError || new Error('Failed to generate prompt after multiple attempts. Please check your API key and try again later.');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to generate prompt. Please try again later.');
-      console.error('Error generating prompt:', err);
-    } finally {
-      setIsLoading(false);
-    }
-=======
   const [selectedLevel, setSelectedLevel] = useState<string>('beginner');
   const [selectedTopic, setSelectedTopic] = useState<string>('animals');
   const [prompt, setPrompt] = useState<StoryPrompt | null>(null);
@@ -679,7 +546,6 @@ const StoryPromptGenerator: React.FC = () => {
     setWordAnalysis(analysis);
     setSpeechScore(finalScore);
     setFeedback(feedbackMessage);
->>>>>>> 0e96a6b2d40a7bc29890e95aecad7a47b77a6584
   };
 
   const handleReadAloud = () => {
@@ -701,8 +567,6 @@ const StoryPromptGenerator: React.FC = () => {
     window.speechSynthesis.speak(utterance);
   };
 
-<<<<<<< HEAD
-=======
   const generateNewPrompt = async () => {
     try {
       // Reset all states
@@ -730,7 +594,6 @@ const StoryPromptGenerator: React.FC = () => {
     }
   };
 
->>>>>>> 0e96a6b2d40a7bc29890e95aecad7a47b77a6584
   return (
     <div className="max-w-2xl mx-auto p-6">
       {/* Reading Level Selector */}
@@ -758,8 +621,6 @@ const StoryPromptGenerator: React.FC = () => {
         </div>
       </div>
 
-<<<<<<< HEAD
-=======
       {/* Topic Selector */}
       <div className="mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -784,36 +645,14 @@ const StoryPromptGenerator: React.FC = () => {
         </div>
       </div>
 
->>>>>>> 0e96a6b2d40a7bc29890e95aecad7a47b77a6584
       {/* Generate Button */}
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-<<<<<<< HEAD
-        onClick={() => generatePrompt(selectedLevel)}
-        disabled={isLoading}
-        className={`w-full bg-gradient-to-r from-primary to-secondary text-white rounded-xl py-4 px-6 text-lg font-semibold shadow-lg hover:shadow-xl transition-shadow ${
-          isLoading ? 'opacity-75 cursor-not-allowed' : ''
-        }`}
-      >
-        {isLoading ? (
-          <span className="flex items-center justify-center">
-            <motion.span
-              animate={{ rotate: 360 }}
-              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-              className="inline-block w-6 h-6 border-2 border-white border-t-transparent rounded-full mr-2"
-            />
-            Generating...
-          </span>
-        ) : (
-          'Generate Story Prompt'
-        )}
-=======
         onClick={generateNewPrompt}
         className="w-full bg-gradient-to-r from-primary to-secondary text-white rounded-xl py-4 px-6 text-lg font-semibold shadow-lg hover:shadow-xl transition-shadow"
       >
         Generate New Prompt
->>>>>>> 0e96a6b2d40a7bc29890e95aecad7a47b77a6584
       </motion.button>
 
       <AnimatePresence mode="wait">
@@ -863,11 +702,6 @@ const StoryPromptGenerator: React.FC = () => {
                 )}
               </motion.button>
             </div>
-<<<<<<< HEAD
-            <p className="text-xl text-gray-800 leading-relaxed">
-              {prompt.prompt}
-            </p>
-=======
             <p className="text-xl text-gray-800 leading-relaxed mb-6">
               {prompt.prompt}
             </p>
@@ -1031,7 +865,6 @@ const StoryPromptGenerator: React.FC = () => {
                 </div>
               )}
             </div>
->>>>>>> 0e96a6b2d40a7bc29890e95aecad7a47b77a6584
           </motion.div>
         )}
       </AnimatePresence>
