@@ -6,7 +6,7 @@ import Confetti from 'react-confetti';
 
 interface Letter {
   id: string;
-  value: string;
+  letter: string;
   matched: boolean;
 }
 
@@ -17,22 +17,81 @@ interface Sound {
   matched: boolean;
 }
 
+interface WordAnalysis {
+  word: string;
+  spoken: string;
+  correct: boolean;
+  confidence: number;
+}
+
+interface StoryPrompt {
+  prompt: string;
+  readingLevel: string;
+  topic: string;
+}
+
 const LETTERS: Letter[] = [
-  { id: 'a', value: 'A', matched: false },
-  { id: 'b', value: 'B', matched: false },
-  { id: 'c', value: 'C', matched: false },
+  { id: 'a', letter: 'A', matched: false },
+  { id: 'b', letter: 'B', matched: false },
+  { id: 'c', letter: 'C', matched: false },
+  { id: 'd', letter: 'D', matched: false },
+  { id: 'e', letter: 'E', matched: false },
+  { id: 'f', letter: 'F', matched: false },
+  { id: 'g', letter: 'G', matched: false },
+  { id: 'h', letter: 'H', matched: false },
+  { id: 'i', letter: 'I', matched: false },
+  { id: 'j', letter: 'J', matched: false },
+  { id: 'k', letter: 'K', matched: false },
+  { id: 'l', letter: 'L', matched: false },
+  { id: 'm', letter: 'M', matched: false },
+  { id: 'n', letter: 'N', matched: false },
+  { id: 'o', letter: 'O', matched: false },
+  { id: 'p', letter: 'P', matched: false },
+  { id: 'q', letter: 'Q', matched: false },
+  { id: 'r', letter: 'R', matched: false },
+  { id: 's', letter: 'S', matched: false },
+  { id: 't', letter: 'T', matched: false },
+  { id: 'u', letter: 'U', matched: false },
+  { id: 'v', letter: 'V', matched: false },
+  { id: 'w', letter: 'W', matched: false },
+  { id: 'x', letter: 'X', matched: false },
+  { id: 'y', letter: 'Y', matched: false },
+  { id: 'z', letter: 'Z', matched: false }
 ];
 
 const SOUNDS: Sound[] = [
   { id: 'apple', word: 'Apple', image: '🍎', matched: false },
   { id: 'ball', word: 'Ball', image: '⚽', matched: false },
   { id: 'cat', word: 'Cat', image: '🐱', matched: false },
+  { id: 'dog', word: 'Dog', image: '🐕', matched: false },
+  { id: 'elephant', word: 'Elephant', image: '🐘', matched: false },
+  { id: 'fish', word: 'Fish', image: '🐟', matched: false },
+  { id: 'giraffe', word: 'Giraffe', image: '🦒', matched: false },
+  { id: 'house', word: 'House', image: '🏠', matched: false },
+  { id: 'igloo', word: 'Igloo', image: '❄️', matched: false },
+  { id: 'jacket', word: 'Jacket', image: '🧥', matched: false },
+  { id: 'kangaroo', word: 'Kangaroo', image: '🦘', matched: false },
+  { id: 'ladder', word: 'Ladder', image: '🪜', matched: false },
+  { id: 'monkey', word: 'Monkey', image: '🐒', matched: false },
+  { id: 'notebook', word: 'Notebook', image: '📓', matched: false },
+  { id: 'octopus', word: 'Octopus', image: '🐙', matched: false },
+  { id: 'penguin', word: 'Penguin', image: '🐧', matched: false },
+  { id: 'queen', word: 'Queen', image: '👑', matched: false },
+  { id: 'rainbow', word: 'Rainbow', image: '🌈', matched: false },
+  { id: 'sun', word: 'Sun', image: '☀️', matched: false },
+  { id: 'tiger', word: 'Tiger', image: '🐯', matched: false },
+  { id: 'umbrella', word: 'Umbrella', image: '☔', matched: false },
+  { id: 'violin', word: 'Violin', image: '🎻', matched: false },
+  { id: 'watermelon', word: 'Watermelon', image: '🍉', matched: false },
+  { id: 'xylophone', word: 'Xylophone', image: '🎼', matched: false },
+  { id: 'yacht', word: 'Yacht', image: '⛵', matched: false },
+  { id: 'zebra', word: 'Zebra', image: '🦓', matched: false }
 ];
 
 const DraggableLetter: React.FC<{ letter: Letter }> = ({ letter }) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: 'LETTER',
-    item: { id: letter.id, value: letter.value },
+    item: { id: letter.id, value: letter.letter },
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
     }),
@@ -47,7 +106,7 @@ const DraggableLetter: React.FC<{ letter: Letter }> = ({ letter }) => {
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
     >
-      {letter.value}
+      {letter.letter}
     </motion.div>
   );
 };
@@ -98,7 +157,7 @@ const PhonicsGame: React.FC = () => {
     if (!letter || !sound) return;
 
     // Check if the match is correct (first letter matches)
-    const isCorrect = sound.word.toLowerCase().startsWith(letter.value.toLowerCase());
+    const isCorrect = sound.word.toLowerCase().startsWith(letter.letter.toLowerCase());
 
     if (isCorrect) {
       setLetters(letters.map(l => 
@@ -111,7 +170,7 @@ const PhonicsGame: React.FC = () => {
       setTimeout(() => setShowConfetti(false), 3000);
     } else {
       // Show hint
-      setHint(`Try matching ${letter.value} with a word that starts with ${letter.value.toLowerCase()}`);
+      setHint(`Try matching ${letter.letter} with a word that starts with ${letter.letter.toLowerCase()}`);
       setTimeout(() => setHint(''), 3000);
     }
   };
@@ -185,26 +244,26 @@ const PhonicsGame: React.FC = () => {
               Reset Game
             </motion.button>
           </div>
-        </div>
 
-        {/* Confetti */}
-        <AnimatePresence>
-          {showConfetti && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0"
-            >
-              <Confetti
-                width={window.innerWidth}
-                height={window.innerHeight}
-                recycle={false}
-                numberOfPieces={200}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
+          {/* Confetti */}
+          <AnimatePresence>
+            {showConfetti && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0"
+              >
+                <Confetti
+                  width={window.innerWidth}
+                  height={window.innerHeight}
+                  recycle={false}
+                  numberOfPieces={200}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </DndProvider>
   );

@@ -4,13 +4,13 @@ import { motion } from 'framer-motion';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Hero from './components/Hero';
-import Features from './components/Features';
 import Testimonials from './components/Testimonials';
-import StoryPromptGenerator from './components/StoryPromptGenerator';
-import PhonicsGame from './components/PhonicsGame';
 import PhonicsDrawingGame from './components/PhonicsDrawingGame';
 import PhonicsGamesMenu from './components/PhonicsGamesMenu';
+import StoryPromptGenerator from './components/StoryPromptGenerator';
+import PhonicsGame from './components/PhonicsGame';
 import ReadingLevelAnalyzer from './components/ReadingLevelAnalyzer';
+import Features from './pages/Features';
 
 function App() {
   return (
@@ -103,10 +103,6 @@ function App() {
                               <span className="text-primary mr-2">✓</span>
                               <span>Develop strong literacy skills at their own pace</span>
                             </li>
-                            <li className="flex items-start">
-                              <span className="text-primary mr-2">✓</span>
-                              <span>Enjoy learning with engaging, interactive content</span>
-                            </li>
                           </ul>
                         </div>
                         <div className="bg-gray-50 p-8 rounded-xl">
@@ -114,15 +110,11 @@ function App() {
                           <ul className="space-y-4 text-left">
                             <li className="flex items-start">
                               <span className="text-primary mr-2">✓</span>
-                              <span>Access detailed progress reports and insights</span>
+                              <span>Track student progress with detailed analytics</span>
                             </li>
                             <li className="flex items-start">
                               <span className="text-primary mr-2">✓</span>
-                              <span>Save time with AI-powered lesson planning</span>
-                            </li>
-                            <li className="flex items-start">
-                              <span className="text-primary mr-2">✓</span>
-                              <span>Support diverse learning needs effectively</span>
+                              <span>Access ready-to-use resources and lesson plans</span>
                             </li>
                           </ul>
                         </div>
@@ -132,19 +124,10 @@ function App() {
                 </section>
               </>
             } />
-            <Route path="/features/story-generator" element={<StoryPromptGenerator />} />
-            <Route path="/features/reading-analyzer" element={<ReadingLevelAnalyzer />} />
-            <Route path="/features/phonics" element={<PhonicsGamesMenu />} />
-            <Route path="/features/phonics/matching" element={<PhonicsGame />} />
-            <Route path="/features/phonics/drawing" element={<PhonicsDrawingGame />} />
-            <Route path="/features/progress" element={
-              <div className="py-20">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                  <h2 className="text-3xl font-bold text-center mb-8">Progress Tracking</h2>
-                  <p className="text-xl text-center text-gray-600">Coming soon!</p>
-                </div>
-              </div>
-            } />
+            <Route path="/story-prompt" element={<StoryPromptGenerator />} />
+            <Route path="/phonics" element={<PhonicsGame />} />
+            <Route path="/analyzer" element={<ReadingLevelAnalyzer />} />
+            <Route path="/features" element={<Features />} />
           </Routes>
         </main>
         <Footer />
