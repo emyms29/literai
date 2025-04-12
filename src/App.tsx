@@ -1,15 +1,24 @@
 import React from 'react';
+<<<<<<< HEAD
 import { BrowserRouter as Router } from 'react-router-dom';
+=======
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+>>>>>>> 0e96a6b2d40a7bc29890e95aecad7a47b77a6584
 import { motion } from 'framer-motion';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Hero from './components/Hero';
+<<<<<<< HEAD
 import Features from './components/Features';
 import Testimonials from './components/Testimonials';
 import StoryPromptGenerator from './components/StoryPromptGenerator';
 import PhonicsGame from './components/PhonicsGame';
 import PhonicsDrawingGame from './components/PhonicsDrawingGame';
 import PhonicsGamesMenu from './components/PhonicsGamesMenu';
+=======
+import StoryPromptGenerator from './components/StoryPromptGenerator';
+import PhonicsGame from './components/PhonicsGame';
+>>>>>>> 0e96a6b2d40a7bc29890e95aecad7a47b77a6584
 import ReadingLevelAnalyzer from './components/ReadingLevelAnalyzer';
 
 function App() {
@@ -18,6 +27,7 @@ function App() {
       <div className="min-h-screen flex flex-col">
         <Navbar />
         <main className="flex-grow">
+<<<<<<< HEAD
 <<<<<<< Updated upstream
           <Hero />
           <section className="py-20 bg-gray-50">
@@ -68,6 +78,8 @@ function App() {
           <Features />
           <Testimonials />
 =======
+=======
+>>>>>>> 0e96a6b2d40a7bc29890e95aecad7a47b77a6584
           <Routes>
             <Route path="/" element={
               <>
@@ -84,9 +96,15 @@ function App() {
                     >
                       <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Mission</h2>
                       <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+<<<<<<< HEAD
                         LiterAI is dedicated to revolutionizing literacy education through artificial intelligence. 
                         We believe every child deserves access to personalized, engaging, and effective learning tools 
                         that adapt to their unique needs and learning style.
+=======
+                        LiterAI is dedicated to helping learners improve their reading and speaking skills through AI-powered practice. 
+                        Our interactive tools provide real-time feedback and personalized exercises to help you develop confidence and fluency 
+                        in your language abilities.
+>>>>>>> 0e96a6b2d40a7bc29890e95aecad7a47b77a6584
                       </p>
                     </motion.div>
                   </div>
@@ -184,9 +202,13 @@ function App() {
             } />
             <Route path="/features/story-generator" element={<StoryPromptGenerator />} />
             <Route path="/features/reading-analyzer" element={<ReadingLevelAnalyzer />} />
+<<<<<<< HEAD
             <Route path="/features/phonics" element={<PhonicsGamesMenu />} />
             <Route path="/features/phonics/matching" element={<PhonicsGame />} />
             <Route path="/features/phonics/drawing" element={<PhonicsDrawingGame />} />
+=======
+            <Route path="/features/phonics-game" element={<PhonicsGame />} />
+>>>>>>> 0e96a6b2d40a7bc29890e95aecad7a47b77a6584
             <Route path="/features/progress" element={
               <div className="py-20">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -196,7 +218,10 @@ function App() {
               </div>
             } />
           </Routes>
+<<<<<<< HEAD
 >>>>>>> Stashed changes
+=======
+>>>>>>> 0e96a6b2d40a7bc29890e95aecad7a47b77a6584
         </main>
         <Footer />
       </div>

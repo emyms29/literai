@@ -23,7 +23,10 @@ const LETTERS: Letter[] = [
   { id: 'c', value: 'C', matched: false },
 ];
 
+<<<<<<< HEAD
 <<<<<<< Updated upstream
+=======
+>>>>>>> 0e96a6b2d40a7bc29890e95aecad7a47b77a6584
 const SOUNDS: Sound[] = [
   { id: 'apple', word: 'Apple', image: '🍎', matched: false },
   { id: 'ball', word: 'Ball', image: '⚽', matched: false },
@@ -38,6 +41,7 @@ const DraggableLetter: React.FC<{ letter: Letter }> = ({ letter }) => {
       isDragging: !!monitor.isDragging(),
     }),
   }));
+<<<<<<< HEAD
 =======
 const SOUND_CATEGORIES: SoundCategory[] = [
   {
@@ -111,6 +115,8 @@ const DIFFICULTY_LEVELS = {
   }
 };
 >>>>>>> Stashed changes
+=======
+>>>>>>> 0e96a6b2d40a7bc29890e95aecad7a47b77a6584
 
   return (
     <motion.div
