@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -38,12 +37,16 @@ interface WordAnalysis {
   correct: boolean;
   confidence: number;
 }
+
 interface StoryPrompt {
   id: string;
   prompt: string;
   category: string;
   difficulty: 'easy' | 'medium' | 'hard';
+  readingLevel?: string;
+  topic?: string;
 }
+
 const READING_LEVELS = [
   { id: 'beginner', label: 'Beginner', description: 'Simple vocabulary, short sentences' },
   { id: 'intermediate', label: 'Intermediate', description: 'Moderate vocabulary, compound sentences' },
@@ -263,42 +266,32 @@ const TOPIC_THEMES = {
   }
 };
 
-const generatePrompt = (level: string, topic: string): string => {
-  const theme = TOPIC_THEMES[topic as keyof typeof TOPIC_THEMES]?.[level as keyof typeof TOPIC_THEMES] || {};
-  
-  if (!theme.subjects || !theme.actions || !theme.objects) {
-    throw new Error('Invalid topic or level selected');
-  }
-
-  // Get random words from the theme
-  const subject = theme.subjects[Math.floor(Math.random() * theme.subjects.length)];
-  const action = theme.actions[Math.floor(Math.random() * theme.actions.length)];
-  const object = theme.objects[Math.floor(Math.random() * theme.objects.length)];
-
-  // Generate sentence based on level
-  if (level === 'beginner') {
-    return `${subject} ${action} ${object}.`;
-  } else if (level === 'intermediate') {
-    // Get a second action and object for compound sentence
-    const action2 = theme.actions[Math.floor(Math.random() * theme.actions.length)];
-    const object2 = theme.objects[Math.floor(Math.random() * theme.objects.length)];
-    return `${subject} ${action} ${object} and ${action2} ${object2}.`;
-  } else {
-    // Advanced level gets a more complex sentence
-    const action2 = theme.actions[Math.floor(Math.random() * theme.actions.length)];
-    const object2 = theme.objects[Math.floor(Math.random() * theme.objects.length)];
-    return `${subject} ${action} ${object} while ${action2} ${object2}.`;
-  }
-};
-
-// Cache for storing generated prompts
-const promptCache = new Map<string, StoryPrompt>();
+const STORY_PROMPTS: StoryPrompt[] = [
+  {
+    id: '1',
+    prompt: 'Write a story about a magical garden where plants can talk.',
+    category: 'Fantasy',
+    difficulty: 'easy',
+  },
+  {
+    id: '2',
+    prompt: 'Describe a day in the life of a superhero who can control time.',
+    category: 'Adventure',
+    difficulty: 'medium',
+  },
+  {
+    id: '3',
+    prompt: 'Create a story about a robot who learns to feel emotions.',
+    category: 'Science Fiction',
+    difficulty: 'hard',
+  },
+];
 
 const StoryPromptGenerator: React.FC = () => {
   const [selectedLevel, setSelectedLevel] = useState<string>('beginner');
   const [selectedTopic, setSelectedTopic] = useState<string>('animals');
-  const [prompt, setPrompt] = useState<StoryPrompt | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [currentPrompt, setCurrentPrompt] = useState<StoryPrompt | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
   const [isRecording, setIsRecording] = useState<boolean>(false);
@@ -488,10 +481,10 @@ const StoryPromptGenerator: React.FC = () => {
   };
 
   const analyzeSpeech = () => {
-    if (!prompt || !submittedRecording) return;
+    if (!currentPrompt || !submittedRecording) return;
 
     const recordingWords = submittedRecording.toLowerCase().split(/\s+/);
-    const expectedWords = prompt.prompt.toLowerCase().split(/\s+/);
+    const expectedWords = currentPrompt.prompt.toLowerCase().split(/\s+/);
     const analysis: WordAnalysis[] = [];
     let correctCount = 0;
     let totalWords = expectedWords.length;
@@ -549,7 +542,7 @@ const StoryPromptGenerator: React.FC = () => {
   };
 
   const handleReadAloud = () => {
-    if (!prompt) return;
+    if (!currentPrompt) return;
 
     window.speechSynthesis.cancel();
 
@@ -558,154 +551,104 @@ const StoryPromptGenerator: React.FC = () => {
       return;
     }
 
-    const utterance = new SpeechSynthesisUtterance(prompt.prompt);
+    const utterance = new SpeechSynthesisUtterance(currentPrompt.prompt);
     utterance.rate = 0.9;
     utterance.pitch = 1.1;
     
     setTimeout(() => {
-      setCurrentPrompt(filteredPrompts[randomIndex]);
+      setCurrentPrompt(currentPrompt);
       setIsGenerating(false);
     }, 1000);
   };
 
-  const generateNewPrompt = async () => {
-    try {
-      // Reset all states
-      resetRecording();
-      setPrompt(null);
-      setTranscript('');
-      setSpeechScore(null);
-      setFeedback('');
-      setWordAnalysis(null);
-      setSubmittedRecording('');
-      setGradingProgress(0);
-      setIsGrading(false);
-      setError(null);
+  const generatePrompt = () => {
+    setIsGenerating(true);
+    setError(null);
 
-      // Generate a new prompt using OpenAI
-      const newPrompt = await generatePrompt(selectedLevel, selectedTopic);
+    try {
+      // Filter prompts based on difficulty mapping
+      const difficultyMap = {
+        'beginner': 'easy',
+        'intermediate': 'medium',
+        'advanced': 'hard'
+      };
       
-      setPrompt({ 
-        prompt: newPrompt, 
-        readingLevel: selectedLevel, 
-        topic: selectedTopic 
+      const difficulty = difficultyMap[selectedLevel as keyof typeof difficultyMap] || 'easy';
+      const filteredPrompts = STORY_PROMPTS.filter(p => p.difficulty === difficulty);
+      
+      if (filteredPrompts.length === 0) {
+        throw new Error('No prompts available for selected difficulty');
+      }
+
+      const randomIndex = Math.floor(Math.random() * filteredPrompts.length);
+      const selectedPrompt = filteredPrompts[randomIndex];
+      
+      // Add reading level and topic to the prompt
+      setCurrentPrompt({
+        ...selectedPrompt,
+        readingLevel: selectedLevel,
+        topic: selectedTopic
       });
     } catch (error) {
-      setError('Failed to generate new prompt. Please try again.');
+      setError('Failed to generate prompt. Please try again.');
+    } finally {
+      setIsGenerating(false);
     }
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      {/* Reading Level Selector */}
-      <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Select Reading Level
-        </label>
-        <div className="grid grid-cols-3 gap-4">
-          {READING_LEVELS.map(level => (
-            <motion.button
-              key={level.id}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => setSelectedLevel(level.id)}
-              className={`p-3 rounded-lg border-2 transition-colors ${
-                selectedLevel === level.id
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-gray-200 hover:border-primary/50'
-              }`}
-            >
-              <span className="block font-medium">{level.label}</span>
-              <span className="block text-sm text-gray-500">{level.description}</span>
-            </motion.button>
-          ))}
-        </div>
-      </div>
-
-      {/* Topic Selector */}
-      <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Select Topic
-        </label>
-        <div className="grid grid-cols-4 gap-3">
-          {TOPICS.map(topic => (
-            <motion.button
-              key={topic}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => setSelectedTopic(topic)}
-              className={`p-2 rounded-lg border-2 transition-colors ${
-                selectedTopic === topic
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-gray-200 hover:border-primary/50'
-              }`}
-            >
-              <span className="block font-medium capitalize">{topic}</span>
-            </motion.button>
-          ))}
-        </div>
-      </div>
-
-      {/* Generate Button */}
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={generateNewPrompt}
-        className="w-full bg-gradient-to-r from-primary to-secondary text-white rounded-xl py-4 px-6 text-lg font-semibold shadow-lg hover:shadow-xl transition-shadow"
-      >
-        Generate New Prompt
-      </motion.button>
-
-      <AnimatePresence mode="wait">
-        {error && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="mt-4 p-4 bg-red-100 text-red-700 rounded-lg"
-          >
-            {error}
-          </motion.div>
-        )}
-
-        {prompt && !error && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="mt-6 bg-white rounded-xl p-6 shadow-lg border-2 border-accent/20"
-          >
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <span className="inline-block px-3 py-1 bg-accent/10 text-accent rounded-full text-sm font-medium">
-                  {READING_LEVELS.find(l => l.id === prompt.readingLevel)?.label}
-                </span>
-                <span className="ml-2 inline-block px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium">
-                  {prompt.topic}
-                </span>
-              </div>
+    <div className="max-w-2xl mx-auto">
+      <div className="bg-white rounded-xl shadow-lg p-6">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">Story Prompt Generator</h2>
+        
+        {/* Reading Level Selector */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Select Reading Level
+          </label>
+          <div className="grid grid-cols-3 gap-4">
+            {READING_LEVELS.map(level => (
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handleReadAloud}
-                className="text-primary hover:text-primary/80 transition-colors"
+                key={level.id}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setSelectedLevel(level.id)}
+                className={`p-3 rounded-lg border-2 transition-colors ${
+                  selectedLevel === level.id
+                    ? 'border-primary bg-primary/10 text-primary'
+                    : 'border-gray-200 hover:border-primary/50'
+                }`}
               >
-                {isSpeaking ? (
-                  <span className="flex items-center">
-                    <span className="mr-2">■</span>
-                    Stop Reading
-                  </span>
-                ) : (
-                  <span className="flex items-center">
-                    <span className="mr-2">▶</span>
-                    Read Aloud
-                  </span>
-                )}
+                <span className="block font-medium">{level.label}</span>
+                <span className="block text-sm text-gray-500">{level.description}</span>
               </motion.button>
-            </div>
-            <p className="text-xl text-gray-800 leading-relaxed mb-6">
-              {prompt.prompt}
-            </p>
+            ))}
+          </div>
+        </div>
+
+        {/* Topic Selector */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Select Topic
+          </label>
+          <div className="grid grid-cols-4 gap-3">
+            {TOPICS.map(topic => (
+              <motion.button
+                key={topic}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setSelectedTopic(topic)}
+                className={`p-2 rounded-lg border-2 transition-colors ${
+                  selectedTopic === topic
+                    ? 'border-primary bg-primary/10 text-primary'
+                    : 'border-gray-200 hover:border-primary/50'
+                }`}
+              >
+                <span className="block font-medium capitalize">{topic}</span>
+              </motion.button>
+            ))}
+          </div>
+        </div>
 
         <button
           onClick={generatePrompt}
@@ -716,6 +659,17 @@ const StoryPromptGenerator: React.FC = () => {
         </button>
 
         <AnimatePresence mode="wait">
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="mt-4 p-4 bg-red-100 text-red-700 rounded-lg"
+            >
+              {error}
+            </motion.div>
+          )}
+
           {currentPrompt && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -725,112 +679,38 @@ const StoryPromptGenerator: React.FC = () => {
               className="mt-8 p-6 bg-gray-50 rounded-lg"
             >
               <div className="flex items-center justify-between mb-4">
-                <span className="text-sm font-medium text-gray-500">
-                  {currentPrompt.category}
-                </span>
-                <span className="text-sm font-medium text-gray-500">
-                  {currentPrompt.difficulty}
-                </span>
-              </div>
-
-              {isTranscribing && (
-                <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-                  <h3 className="text-lg font-semibold mb-2">Live Transcription:</h3>
-                  <p className="text-gray-700">{transcript}</p>
+                <div>
+                  <span className="inline-block px-3 py-1 bg-accent/10 text-accent rounded-full text-sm font-medium">
+                    {READING_LEVELS.find(l => l.id === currentPrompt.readingLevel)?.label}
+                  </span>
+                  <span className="ml-2 inline-block px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium">
+                    {currentPrompt.topic}
+                  </span>
                 </div>
-              )}
-
-              {isGrading && (
-                <div className="mt-4 p-4 bg-white rounded-lg border-2 border-primary/20">
-                  <h3 className="text-lg font-semibold mb-2">Grading Your Recording...</h3>
-                  <div className="flex items-center space-x-4">
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                      className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full"
-                    />
-                    <div className="flex-1">
-                      <div className="w-full bg-gray-200 rounded-full h-2.5">
-                        <motion.div
-                          className="bg-primary h-2.5 rounded-full"
-                          initial={{ width: 0 }}
-                          animate={{ width: `${gradingProgress}%` }}
-                          transition={{ duration: 0.2 }}
-                        />
-                      </div>
-                    </div>
-                    <span className="text-sm font-medium text-gray-600">
-                      {gradingProgress}%
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleReadAloud}
+                  className="text-primary hover:text-primary/80 transition-colors"
+                >
+                  {isSpeaking ? (
+                    <span className="flex items-center">
+                      <span className="mr-2">■</span>
+                      Stop Reading
                     </span>
-                  </div>
-                </div>
-              )}
-
-              {!isGrading && wordAnalysis && (
-                <div className="mt-4 p-4 bg-white rounded-lg border-2 border-primary/20">
-                  <h3 className="text-lg font-semibold mb-2">Word-by-Word Analysis:</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {wordAnalysis.map((word, index) => (
-                      <span
-                        key={index}
-                        className={`px-3 py-1 rounded-full text-sm ${
-                          word.correct
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-red-100 text-red-800'
-                        }`}
-                      >
-                        {word.word}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {!isGrading && speechScore !== null && (
-                <div className="mt-4 p-4 bg-white rounded-lg border-2 border-primary/20">
-                  <h3 className="text-lg font-semibold mb-2">Speech Analysis Results:</h3>
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-4">
-                      <div className="text-4xl font-bold text-primary">
-                        {speechScore}%
-                      </div>
-                      <div className="flex-1">
-                        <div className="w-full bg-gray-200 rounded-full h-3">
-                          <div
-                            className={`h-3 rounded-full ${
-                              speechScore >= 80
-                                ? 'bg-green-500'
-                                : speechScore >= 50
-                                ? 'bg-yellow-500'
-                                : 'bg-red-500'
-                            }`}
-                            style={{ width: `${speechScore}%` }}
-                          ></div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="p-3 bg-gray-50 rounded-lg">
-                        <div className="text-sm text-gray-500">Accuracy</div>
-                        <div className="text-xl font-semibold">
-                          {Math.round(speechScore * 0.8)}%
-                        </div>
-                      </div>
-                      <div className="p-3 bg-gray-50 rounded-lg">
-                        <div className="text-sm text-gray-500">Fluency</div>
-                        <div className="text-xl font-semibold">
-                          {Math.round(speechScore * 0.2)}%
-                        </div>
-                      </div>
-                    </div>
-                    <p className="mt-2 text-gray-600">{feedback}</p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                  ) : (
+                    <span className="flex items-center">
+                      <span className="mr-2">▶</span>
+                      Read Aloud
+                    </span>
+                  )}
+                </motion.button>
+              </div>
+              <p className="text-xl text-gray-900">{currentPrompt.prompt}</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 };
