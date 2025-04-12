@@ -30,7 +30,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link to="/reading-buddy" className="text-gray-400 hover:text-white transition-colors">
-                  Reading Buddy
+                  Talking Buddy
                 </Link>
               </li>
             </ul>

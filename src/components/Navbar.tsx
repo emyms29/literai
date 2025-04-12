@@ -36,7 +36,7 @@ const Navbar: React.FC = () => {
                 to="/reading-buddy"
                 className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900 hover:text-primary"
               >
-                Reading Buddy
+                Talking Buddy
               </Link>
             </div>
           </div>

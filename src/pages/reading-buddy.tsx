@@ -14,9 +14,9 @@ const ReadingBuddyPage = () => {
           transition={{ duration: 0.5 }}
           className="text-center mb-12"
         >
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Reading Buddy</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Talking Buddy</h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Your personal AI reading assistant, here to help you improve your reading skills!
+            Your personal AI conversation partner, here to help you practice your language skills!
           </p>
         </motion.div>
 

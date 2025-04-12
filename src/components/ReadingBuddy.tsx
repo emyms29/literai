@@ -95,7 +95,7 @@ const ReadingBuddy: React.FC<ReadingBuddyProps> = ({ lexileLevel }) => {
             <span className="text-2xl">📚</span>
           </div>
           <div>
-            <h2 className="text-xl font-bold">Reading Buddy</h2>
+            <h2 className="text-xl font-bold">Talking Buddy</h2>
             <p className="text-gray-600">Lexile Level: {lexileLevel}</p>
           </div>
         </div>

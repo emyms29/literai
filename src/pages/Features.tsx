@@ -39,26 +39,54 @@ const Features = () => {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {features.map((feature, index) => (
-            <motion.div
-              key={feature.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: index * 0.2 }}
-              className="bg-white p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow"
-            >
-              <div className="text-4xl mb-4">{feature.icon}</div>
-              <h3 className="text-2xl font-semibold mb-4">{feature.title}</h3>
-              <p className="text-gray-600 mb-6">{feature.description}</p>
-              <Link
-                to={feature.path}
-                className="inline-block bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors"
-              >
-                Try Now
-              </Link>
-            </motion.div>
-          ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <motion.div
+            whileHover={{ scale: 1.02 }}
+            className="bg-white p-6 rounded-xl shadow-lg"
+          >
+            <div className="text-4xl mb-4">📚</div>
+            <h3 className="text-xl font-semibold mb-2">Story Generator</h3>
+            <p className="text-gray-600 mb-4">Create personalized stories based on reading level and interests.</p>
+            <Link to="/story-prompt" className="text-primary hover:text-primary/80">
+              Try it out →
+            </Link>
+          </motion.div>
+
+          <motion.div
+            whileHover={{ scale: 1.02 }}
+            className="bg-white p-6 rounded-xl shadow-lg"
+          >
+            <div className="text-4xl mb-4">🎮</div>
+            <h3 className="text-xl font-semibold mb-2">Phonics Game</h3>
+            <p className="text-gray-600 mb-4">Interactive games to practice phonics and word recognition.</p>
+            <Link to="/phonics" className="text-primary hover:text-primary/80">
+              Play now →
+            </Link>
+          </motion.div>
+
+          <motion.div
+            whileHover={{ scale: 1.02 }}
+            className="bg-white p-6 rounded-xl shadow-lg"
+          >
+            <div className="text-4xl mb-4">📊</div>
+            <h3 className="text-xl font-semibold mb-2">Reading Comprehension</h3>
+            <p className="text-gray-600 mb-4">Practice reading comprehension with leveled passages.</p>
+            <Link to="/analyzer" className="text-primary hover:text-primary/80">
+              Get started →
+            </Link>
+          </motion.div>
+
+          <motion.div
+            whileHover={{ scale: 1.02 }}
+            className="bg-white p-6 rounded-xl shadow-lg"
+          >
+            <div className="text-4xl mb-4">💬</div>
+            <h3 className="text-xl font-semibold mb-2">Talking Buddy</h3>
+            <p className="text-gray-600 mb-4">Practice conversations with an AI partner at your reading level.</p>
+            <Link to="/reading-buddy" className="text-primary hover:text-primary/80">
+              Start chatting →
+            </Link>
+          </motion.div>
         </div>
       </div>
     </div>

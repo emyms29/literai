@@ -181,29 +181,66 @@ const ReadingLevelAnalyzer: React.FC = () => {
   const [questionStatus, setQuestionStatus] = useState<{ [key: number]: boolean }>({});
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [progress, setProgress] = useState<number>(0);
 
-  const generatePassage = () => {
+  const generatePassage = async () => {
     setIsLoading(true);
     setError(null);
+    setProgress(0);
+
+    // Simulate progress updates
+    const progressInterval = setInterval(() => {
+      setProgress(prev => Math.min(prev + 10, 90));
+    }, 500);
 
     try {
-      // Get passages for the selected difficulty
-      const difficultyPassages = SAMPLE_PASSAGES.filter(
-        passage => passage.difficulty === selectedDifficulty
-      );
+      console.log('Generating passage for difficulty:', selectedDifficulty);
+      
+      const response = await fetch('http://localhost:3001/api/generate-passage', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          difficulty: selectedDifficulty
+        }),
+      });
 
-      if (difficultyPassages.length === 0) {
-        throw new Error('No passages available for this difficulty level');
+      clearInterval(progressInterval);
+      setProgress(100);
+
+      console.log('API Response status:', response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      // Randomly select a passage
-      const randomIndex = Math.floor(Math.random() * difficultyPassages.length);
-      const newPassage = difficultyPassages[randomIndex];
+      const data = await response.json();
+      console.log('API Response data:', data);
 
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to generate passage');
+      }
+
+      if (!data.passage) {
+        throw new Error('No passage data received');
+      }
+
+      const newPassage = {
+        ...data.passage,
+        id: Date.now(),
+        lexileLevel: selectedDifficulty === 'beginner' ? 650 : 
+                    selectedDifficulty === 'intermediate' ? 850 : 1050
+      };
+
+      console.log('Generated new passage:', newPassage);
       handlePassageSelect(newPassage);
     } catch (err) {
-      setError('Failed to generate passage. Please try again.');
-      console.error('Error generating passage:', err);
+      console.error('Detailed error:', err);
+      setError(err.message || 'Failed to generate passage. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -303,9 +340,9 @@ const ReadingLevelAnalyzer: React.FC = () => {
       {/* Generate Passage Button */}
       {!selectedPassage && (
         <div className="mb-8 text-center">
-      <motion.button
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={generatePassage}
             disabled={isLoading}
             className={`px-6 py-3 bg-primary text-white rounded-xl font-medium hover:bg-primary/90 transition-colors text-lg ${
@@ -313,19 +350,34 @@ const ReadingLevelAnalyzer: React.FC = () => {
             }`}
           >
             {isLoading ? (
-          <span className="flex items-center justify-center">
-            <motion.span
-              animate={{ rotate: 360 }}
-              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-              className="inline-block w-6 h-6 border-2 border-white border-t-transparent rounded-full mr-2"
-            />
+              <span className="flex items-center justify-center">
+                <motion.span
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  className="inline-block w-6 h-6 border-2 border-white border-t-transparent rounded-full mr-2"
+                />
                 Generating...
-          </span>
-        ) : (
+              </span>
+            ) : (
               'Generate Passage'
-        )}
-      </motion.button>
-      {error && (
+            )}
+          </motion.button>
+          {isLoading && (
+            <div className="mt-4 w-full max-w-md mx-auto">
+              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                <motion.div
+                  className="h-full bg-primary"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${progress}%` }}
+                  transition={{ duration: 0.3 }}
+                />
+              </div>
+              <p className="text-sm text-gray-600 mt-2">
+                {progress < 100 ? 'Generating your passage...' : 'Almost done!'}
+              </p>
+            </div>
+          )}
+          {error && (
             <p className="mt-4 text-red-600">{error}</p>
           )}
         </div>
