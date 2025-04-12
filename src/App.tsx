@@ -11,6 +11,7 @@ import StoryPromptGenerator from './components/StoryPromptGenerator';
 import PhonicsGame from './components/PhonicsGame';
 import ReadingLevelAnalyzer from './components/ReadingLevelAnalyzer';
 import Features from './pages/Features';
+import ReadingBuddyPage from './pages/reading-buddy';
 
 function App() {
   return (
@@ -119,6 +120,7 @@ function App() {
             <Route path="/phonics" element={<PhonicsGame />} />
             <Route path="/analyzer" element={<ReadingLevelAnalyzer />} />
             <Route path="/features" element={<Features />} />
+            <Route path="/reading-buddy" element={<ReadingBuddyPage />} />
           </Routes>
         </main>
         <Footer />

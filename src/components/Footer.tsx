@@ -28,6 +28,11 @@ const Footer = () => {
                   Reading Comprehension
                 </Link>
               </li>
+              <li>
+                <Link to="/reading-buddy" className="text-gray-400 hover:text-white transition-colors">
+                  Reading Buddy
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
