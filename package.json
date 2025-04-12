@@ -10,10 +10,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-<<<<<<< HEAD
-    "@google-cloud/vision": "^5.1.0",
-=======
->>>>>>> 0e96a6b2d40a7bc29890e95aecad7a47b77a6584
     "chart.js": "^4.4.8",
     "framer-motion": "^11.0.3",
     "react": "^18.2.0",

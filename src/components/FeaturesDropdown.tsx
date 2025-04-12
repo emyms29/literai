@@ -16,8 +16,8 @@ const features = [
     icon: '📊',
   },
   {
-    title: 'Phonics Game',
-    path: '/features/phonics-game',
+    title: 'Phonics Games',
+    path: '/features/phonics',
     description: 'Interactive phonics learning',
     icon: '🎮',
   },
@@ -29,14 +29,18 @@ const features = [
   },
 ];
 
-const FeaturesDropdown = () => {
+interface FeaturesDropdownProps {
+  mobile?: boolean;
+}
+
+const FeaturesDropdown: React.FC<FeaturesDropdownProps> = ({ mobile = false }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="relative">
+    <div className={`relative ${mobile ? 'w-full' : ''}`}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center text-gray-600 hover:text-primary transition-colors"
+        className={`flex items-center text-gray-600 hover:text-primary transition-colors ${mobile ? 'w-full px-3 py-2 rounded-md text-base font-medium hover:bg-gray-50' : ''}`}
       >
         Features
         <span className="ml-1">
@@ -51,7 +55,7 @@ const FeaturesDropdown = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-100 z-50"
+            className={`${mobile ? 'relative w-full mt-1' : 'absolute top-full left-0 mt-2 w-64'} bg-white rounded-lg shadow-lg border border-gray-100 z-50`}
           >
             <div className="py-2">
               {features.map((feature) => (
@@ -59,7 +63,7 @@ const FeaturesDropdown = () => {
                   key={feature.path}
                   to={feature.path}
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center px-4 py-2 text-gray-700 hover:bg-primary/5 hover:text-primary transition-colors"
+                  className={`flex items-center px-4 py-2 text-gray-700 hover:bg-primary/5 hover:text-primary transition-colors ${mobile ? 'block' : ''}`}
                 >
                   <span className="text-xl mr-3">{feature.icon}</span>
                   <div>

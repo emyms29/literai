@@ -23,10 +23,6 @@ const LETTERS: Letter[] = [
   { id: 'c', value: 'C', matched: false },
 ];
 
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
->>>>>>> 0e96a6b2d40a7bc29890e95aecad7a47b77a6584
 const SOUNDS: Sound[] = [
   { id: 'apple', word: 'Apple', image: '🍎', matched: false },
   { id: 'ball', word: 'Ball', image: '⚽', matched: false },
@@ -41,82 +37,6 @@ const DraggableLetter: React.FC<{ letter: Letter }> = ({ letter }) => {
       isDragging: !!monitor.isDragging(),
     }),
   }));
-<<<<<<< HEAD
-=======
-const SOUND_CATEGORIES: SoundCategory[] = [
-  {
-    id: 'single-letters',
-    name: 'Single Letters',
-    sounds: [
-      { id: 'apple', word: 'Apple', image: '🍎', matched: false, sound: 'a' },
-      { id: 'ball', word: 'Ball', image: '⚽', matched: false, sound: 'b' },
-      { id: 'cat', word: 'Cat', image: '🐱', matched: false, sound: 'c' },
-      { id: 'dog', word: 'Dog', image: '🐕', matched: false, sound: 'd' },
-      { id: 'elephant', word: 'Elephant', image: '🐘', matched: false, sound: 'e' },
-      { id: 'fish', word: 'Fish', image: '🐟', matched: false, sound: 'f' },
-      { id: 'giraffe', word: 'Giraffe', image: '🦒', matched: false, sound: 'g' },
-      { id: 'house', word: 'House', image: '🏠', matched: false, sound: 'h' },
-      { id: 'igloo', word: 'Igloo', image: '❄️', matched: false, sound: 'i' },
-      { id: 'jacket', word: 'Jacket', image: '🧥', matched: false, sound: 'j' },
-      { id: 'kangaroo', word: 'Kangaroo', image: '🦘', matched: false, sound: 'k' },
-      { id: 'ladder', word: 'Ladder', image: '🪜', matched: false, sound: 'l' },
-      { id: 'monkey', word: 'Monkey', image: '🐒', matched: false, sound: 'm' },
-      { id: 'notebook', word: 'Notebook', image: '📓', matched: false, sound: 'n' },
-      { id: 'octopus', word: 'Octopus', image: '🐙', matched: false, sound: 'o' },
-      { id: 'penguin', word: 'Penguin', image: '🐧', matched: false, sound: 'p' },
-      { id: 'queen', word: 'Queen', image: '👑', matched: false, sound: 'q' },
-      { id: 'rainbow', word: 'Rainbow', image: '🌈', matched: false, sound: 'r' },
-      { id: 'sun', word: 'Sun', image: '☀️', matched: false, sound: 's' },
-      { id: 'tiger', word: 'Tiger', image: '🐯', matched: false, sound: 't' },
-      { id: 'umbrella', word: 'Umbrella', image: '☔', matched: false, sound: 'u' },
-      { id: 'violin', word: 'Violin', image: '🎻', matched: false, sound: 'v' },
-      { id: 'watermelon', word: 'Watermelon', image: '🍉', matched: false, sound: 'w' },
-      { id: 'xylophone', word: 'Xylophone', image: '🎼', matched: false, sound: 'x' },
-      { id: 'yacht', word: 'Yacht', image: '⛵', matched: false, sound: 'y' },
-      { id: 'zebra', word: 'Zebra', image: '🦓', matched: false, sound: 'z' },
-    ],
-  },
-  {
-    id: 'digraphs',
-    name: 'Digraphs',
-    sounds: [
-      { id: 'chair', word: 'Chair', image: '🪑', matched: false, sound: 'ch' },
-      { id: 'ship', word: 'Ship', image: '🚢', matched: false, sound: 'sh' },
-      { id: 'thumb', word: 'Thumb', image: '👍', matched: false, sound: 'th' },
-      { id: 'phone', word: 'Phone', image: '📱', matched: false, sound: 'ph' },
-      { id: 'whale', word: 'Whale', image: '🐋', matched: false, sound: 'wh' },
-      { id: 'school', word: 'School', image: '🏫', matched: false, sound: 'sch' },
-      { id: 'splash', word: 'Splash', image: '💦', matched: false, sound: 'spl' },
-      { id: 'squirrel', word: 'Squirrel', image: '🐿️', matched: false, sound: 'squ' },
-      { id: 'through', word: 'Through', image: '🚪', matched: false, sound: 'thr' },
-      { id: 'strength', word: 'Strength', image: '💪', matched: false, sound: 'str' },
-    ],
-  },
-];
-
-const DIFFICULTY_LEVELS = {
-  easy: {
-    name: 'Easy',
-    description: '3-4 letter words',
-    categories: ['single-letters'],
-    maxItems: 6
-  },
-  medium: {
-    name: 'Medium',
-    description: '4-5 letter words',
-    categories: ['single-letters', 'digraphs'],
-    maxItems: 6
-  },
-  hard: {
-    name: 'Hard',
-    description: 'Longer, complex words',
-    categories: ['single-letters', 'digraphs'],
-    maxItems: 6
-  }
-};
->>>>>>> Stashed changes
-=======
->>>>>>> 0e96a6b2d40a7bc29890e95aecad7a47b77a6584
 
   return (
     <motion.div
