@@ -398,22 +398,18 @@ const StoryPromptGenerator: React.FC = () => {
           setIsGrading(true);
           setGradingProgress(0);
           
-          // Simulate grading process with progress - faster now
+          // Simulate grading process with progress
           const interval = setInterval(() => {
             setGradingProgress(prev => {
               if (prev >= 100) {
                 clearInterval(interval);
                 setIsGrading(false);
-                // Calculate and set score with more varied range
-                const baseScore = Math.floor(Math.random() * 40); // 0-39
-                const score = baseScore + 60; // 60-99
-                setSpeechScore(score);
                 analyzeSpeech();
                 return 100;
               }
-              return prev + 25; // Larger steps
+              return prev + 25;
             });
-          }, 50); // Shorter interval
+          }, 50);
         } else {
           setError('No speech detected. Please try speaking again.');
           resetRecording();
@@ -489,19 +485,23 @@ const StoryPromptGenerator: React.FC = () => {
     let correctCount = 0;
     let totalWords = expectedWords.length;
 
-    // More lenient word matching
+    // Word matching with proper handling of unspoken words
     for (let i = 0; i < expectedWords.length; i++) {
       const expected = expectedWords[i];
       const spoken = recordingWords[i] || '';
-      const isCorrect = expected === spoken || 
-                       expected.includes(spoken) || 
-                       spoken.includes(expected);
+      
+      // Mark as incorrect if word wasn't spoken
+      const isCorrect = spoken !== '' && (
+        expected === spoken || 
+        expected.includes(spoken) || 
+        spoken.includes(expected)
+      );
       
       analysis.push({
         word: expected,
-        spoken: spoken,
+        spoken: spoken || '(not spoken)',
         correct: isCorrect,
-        confidence: isCorrect ? 1 : 0.5
+        confidence: isCorrect ? 1 : 0
       });
 
       if (isCorrect) {
@@ -509,28 +509,27 @@ const StoryPromptGenerator: React.FC = () => {
       }
     }
 
-    // Calculate accuracy with partial credit
+    // Calculate accuracy (0-100)
     const accuracy = (correctCount / totalWords) * 100;
 
-    // Calculate fluency score (words per second) with more balanced scoring
+    // Calculate fluency score (0-20 bonus points)
     const duration = 10; // Assuming 10 seconds of recording
     const wordsPerSecond = recordingWords.length / duration;
     // Target range: 2-4 words per second is considered good
-    const fluencyScore = Math.min(Math.max((wordsPerSecond - 1) * 25, 0), 50);
-    // This gives a range of 0-50 for fluency
+    const fluencyScore = Math.min(Math.max((wordsPerSecond - 1) * 5, 0), 20);
 
-    // Calculate final score with adjusted weights
-    const finalScore = (accuracy * 0.7) + fluencyScore; // 70% accuracy, 30% fluency
+    // Calculate final score: accuracy (0-100) + fluency bonus (0-20), capped at 100
+    const finalScore = Math.min(accuracy + fluencyScore, 100);
 
-    // Generate feedback based on the score
+    // Generate feedback based on the accuracy
     let feedbackMessage = '';
-    if (finalScore >= 90) {
+    if (accuracy >= 90) {
       feedbackMessage = 'Excellent! Your pronunciation and fluency are outstanding.';
-    } else if (finalScore >= 80) {
+    } else if (accuracy >= 80) {
       feedbackMessage = 'Great job! Your speech is clear and natural.';
-    } else if (finalScore >= 70) {
+    } else if (accuracy >= 70) {
       feedbackMessage = 'Good work! Keep practicing to improve your fluency.';
-    } else if (finalScore >= 60) {
+    } else if (accuracy >= 60) {
       feedbackMessage = 'Not bad! Focus on speaking more naturally.';
     } else {
       feedbackMessage = 'Keep practicing! Try to speak more clearly and at a natural pace.';
@@ -566,29 +565,36 @@ const StoryPromptGenerator: React.FC = () => {
     setError(null);
 
     try {
-      // Filter prompts based on difficulty mapping
-      const difficultyMap = {
-        'beginner': 'easy',
-        'intermediate': 'medium',
-        'advanced': 'hard'
-      };
-      
-      const difficulty = difficultyMap[selectedLevel as keyof typeof difficultyMap] || 'easy';
-      const filteredPrompts = STORY_PROMPTS.filter(p => p.difficulty === difficulty);
-      
-      if (filteredPrompts.length === 0) {
-        throw new Error('No prompts available for selected difficulty');
+      const themes = TOPIC_THEMES[selectedTopic as keyof typeof TOPIC_THEMES];
+      if (!themes) {
+        throw new Error('Invalid topic selected');
       }
 
-      const randomIndex = Math.floor(Math.random() * filteredPrompts.length);
-      const selectedPrompt = filteredPrompts[randomIndex];
-      
-      // Add reading level and topic to the prompt
+      const levelThemes = themes[selectedLevel as keyof typeof themes];
+      if (!levelThemes) {
+        throw new Error('Invalid level selected');
+      }
+
+      // Generate a sentence using the theme components
+      const subject = levelThemes.subjects[Math.floor(Math.random() * levelThemes.subjects.length)];
+      const action = levelThemes.actions[Math.floor(Math.random() * levelThemes.actions.length)];
+      const object = levelThemes.objects[Math.floor(Math.random() * levelThemes.objects.length)];
+
+      // Create the prompt
+      const generatedPrompt = `${subject} ${action} ${object}.`;
+
+      // Set the new prompt
       setCurrentPrompt({
-        ...selectedPrompt,
+        id: Date.now().toString(),
+        prompt: generatedPrompt,
+        category: selectedTopic,
+        difficulty: selectedLevel as 'easy' | 'medium' | 'hard',
         readingLevel: selectedLevel,
         topic: selectedTopic
       });
+
+      // Reset speech-related states when generating new prompt
+      resetRecording();
     } catch (error) {
       setError('Failed to generate prompt. Please try again.');
     } finally {
@@ -597,7 +603,7 @@ const StoryPromptGenerator: React.FC = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-2xl mx-auto p-6">
       <div className="bg-white rounded-xl shadow-lg p-6">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Story Prompt Generator</h2>
         
@@ -650,12 +656,13 @@ const StoryPromptGenerator: React.FC = () => {
           </div>
         </div>
 
+        {/* Generate Button */}
         <button
           onClick={generatePrompt}
           disabled={isGenerating}
           className="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isGenerating ? 'Generating...' : 'Generate Prompt'}
+          {isGenerating ? 'Generating...' : 'Generate New Prompt'}
         </button>
 
         <AnimatePresence mode="wait">
@@ -707,6 +714,155 @@ const StoryPromptGenerator: React.FC = () => {
                 </motion.button>
               </div>
               <p className="text-xl text-gray-900">{currentPrompt.prompt}</p>
+
+              {/* Speech Recording Section */}
+              <div className="mt-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={isRecording ? (isPaused ? resumeRecording : pauseRecording) : startRecording}
+                      className={`px-6 py-3 rounded-lg font-semibold flex items-center space-x-2 ${
+                        isRecording
+                          ? 'bg-red-500 text-white hover:bg-red-600'
+                          : 'bg-primary text-white hover:bg-primary/90'
+                      }`}
+                    >
+                      <span>{isRecording ? (isPaused ? '▶' : '❚❚') : '●'}</span>
+                      <span>{isRecording ? (isPaused ? 'Resume' : 'Pause') : 'Start Recording'}</span>
+                    </motion.button>
+                    {isRecording && (
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={stopRecording}
+                        className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300"
+                      >
+                        Stop
+                      </motion.button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Live Transcription */}
+                {isTranscribing && (
+                  <div className="p-4 bg-gray-50 rounded-lg">
+                    <p className="text-gray-600">{transcript || 'Listening...'}</p>
+                  </div>
+                )}
+
+                {/* Submit Recording Button */}
+                {transcript && !isRecording && !isGrading && speechScore === null && (
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={stopRecording}
+                    className="w-full px-6 py-3 bg-accent text-white rounded-lg font-semibold hover:bg-accent/90 transition-colors"
+                  >
+                    Submit Recording
+                  </motion.button>
+                )}
+
+                {/* Grading Progress */}
+                {isGrading && (
+                  <div className="space-y-2">
+                    <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-primary transition-all duration-300"
+                        style={{ width: `${gradingProgress}%` }}
+                      />
+                    </div>
+                    <p className="text-sm text-gray-600 text-center">Analyzing speech...</p>
+                  </div>
+                )}
+
+                {/* Results */}
+                {!isGrading && speechScore !== null && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="space-y-6"
+                  >
+                    {/* Score and Feedback */}
+                    <div className="text-center space-y-3">
+                      <div>
+                        <span className="text-4xl font-bold text-primary">{Math.round(speechScore)}</span>
+                        <span className="text-xl text-gray-600">/100</span>
+                      </div>
+                      {feedback && (
+                        <p className="text-gray-700 font-medium">{feedback}</p>
+                      )}
+                    </div>
+
+                    {/* Detailed Word Analysis */}
+                    {wordAnalysis && (
+                      <div className="bg-gray-50 rounded-lg overflow-hidden">
+                        <div className="p-4 bg-gray-100 border-b border-gray-200">
+                          <h3 className="font-semibold text-gray-900">Word Analysis</h3>
+                        </div>
+                        <div className="p-4">
+                          <div className="space-y-3">
+                            {wordAnalysis.map((analysis, index) => (
+                              <div
+                                key={index}
+                                className="flex items-center justify-between p-2 bg-white rounded-lg shadow-sm"
+                              >
+                                <div className="flex items-center space-x-3">
+                                  <span className={`w-2 h-2 rounded-full ${
+                                    analysis.correct ? 'bg-green-500' : 'bg-red-500'
+                                  }`} />
+                                  <div>
+                                    <p className="font-medium text-gray-900">{analysis.word}</p>
+                                    <p className="text-sm text-gray-500">
+                                      {analysis.spoken || '(not spoken)'}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="text-right">
+                                  <span className={`inline-block px-2 py-1 text-sm rounded ${
+                                    analysis.correct 
+                                      ? 'bg-green-100 text-green-800' 
+                                      : 'bg-red-100 text-red-800'
+                                  }`}>
+                                    {analysis.correct ? 'Correct' : 'Incorrect'}
+                                  </span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                        
+                        {/* Summary Statistics */}
+                        <div className="p-4 bg-gray-100 border-t border-gray-200">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="text-center">
+                              <p className="text-sm text-gray-600">Accuracy</p>
+                              <p className="text-lg font-semibold text-gray-900">
+                                {Math.round((wordAnalysis.filter(w => w.correct).length / wordAnalysis.length) * 100)}%
+                              </p>
+                            </div>
+                            <div className="text-center">
+                              <p className="text-sm text-gray-600">Words Analyzed</p>
+                              <p className="text-lg font-semibold text-gray-900">{wordAnalysis.length}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Try Again Button */}
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={resetRecording}
+                      className="w-full px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary/90 transition-colors"
+                    >
+                      Try Again
+                    </motion.button>
+                  </motion.div>
+                )}
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
