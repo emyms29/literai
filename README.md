@@ -22,16 +22,20 @@ LiterAI is an AI-powered literacy learning platform designed for K-12 students. 
 
 ## Getting Started
 
-1. Clone the repository
-2. Install dependencies:
+1. Clone the repository (run "git clone https://github.com/oli-ht/literai.git" in terminal)
+2. Open folder in code editor
+3. Install dependencies in terminal:
    ```bash
    npm install
    ```
-3. Start the development server:
+4. Start the development server:
    ```bash
    npm run dev
    ```
-4. Open [http://localhost:5173](http://localhost:5173) in your browser
+5. Open [http://localhost:5173](http://localhost:5173) in your browser
+
+6. Fill in env. variables if you have them (enables chatbot and reading comprehension generation)
+  - GEMINI, OPENAI, HUGGINGFACE
 
 ## Project Structure
 
