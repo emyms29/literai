@@ -260,7 +260,7 @@ const PhonicsGame: React.FC = () => {
     switch (difficulty) {
       case 1: return 240; // 4 minutes for easy
       case 2: return 180; // 3 minutes for medium
-      case 3: return 5; // 5 seconds for hard
+      case 3: return 120; // 2 minutes for hard
       default: return 180;
     }
   };

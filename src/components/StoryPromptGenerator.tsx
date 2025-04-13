@@ -543,6 +543,7 @@ const StoryPromptGenerator: React.FC = () => {
   const handleReadAloud = () => {
     if (!currentPrompt) return;
 
+    // Cancel any ongoing speech
     window.speechSynthesis.cancel();
 
     if (isSpeaking) {
@@ -554,10 +555,23 @@ const StoryPromptGenerator: React.FC = () => {
     utterance.rate = 0.9;
     utterance.pitch = 1.1;
     
-    setTimeout(() => {
-      setCurrentPrompt(currentPrompt);
-      setIsGenerating(false);
-    }, 1000);
+    // Set up event listeners
+    utterance.onstart = () => {
+      setIsSpeaking(true);
+    };
+    
+    utterance.onend = () => {
+      setIsSpeaking(false);
+    };
+    
+    utterance.onerror = (event) => {
+      console.error('Speech synthesis error:', event);
+      setIsSpeaking(false);
+      setError('Error reading text aloud. Please try again.');
+    };
+
+    // Add the utterance to the speech queue
+    window.speechSynthesis.speak(utterance);
   };
 
   const generatePrompt = () => {
