@@ -190,8 +190,8 @@ const shuffleArray = <T,>(array: T[]): T[] => {
 };
 
 const PhonicsGame: React.FC = () => {
-  const [words, setWords] = useState<Word[]>(WORDS);
-  const [emojis, setEmojis] = useState<Emoji[]>(EMOJIS);
+  const [words, setWords] = useState<Word[]>([]);
+  const [emojis, setEmojis] = useState<Emoji[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
   const [hint, setHint] = useState<string>('');
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
@@ -201,50 +201,109 @@ const PhonicsGame: React.FC = () => {
   const [difficulty, setDifficulty] = useState<number>(1);
   const [currentRound, setCurrentRound] = useState<number>(0);
   const [roundsPerLevel, setRoundsPerLevel] = useState<number>(3);
+  const [roundAttempts, setRoundAttempts] = useState<{[key: string]: number}>({});
+  const [incorrectWords, setIncorrectWords] = useState<Set<string>>(new Set());
   const [gameStats, setGameStats] = useState<{word: string, attempts: number}[]>([]);
   const [showVictoryMessage, setShowVictoryMessage] = useState(false);
+  const [score, setScore] = useState(0);
+  const [streak, setStreak] = useState(0);
+  const [highScore, setHighScore] = useState(() => {
+    const saved = localStorage.getItem('phonicsHighScore');
+    return saved ? parseInt(saved) : 0;
+  });
+  const [powerUps, setPowerUps] = useState({
+    hint: 3,
+    shuffle: 2,
+    timeBonus: 1
+  });
+  const [showPowerUp, setShowPowerUp] = useState(false);
+
+  // Initialize game state
+  useEffect(() => {
+    const initialItems = getCurrentRoundItems();
+    if (initialItems.words.length > 0 && initialItems.emojis.length > 0) {
+      setWords(initialItems.words);
+      setEmojis(initialItems.emojis);
+    }
+  }, []);
 
   // Filter words and emojis based on difficulty and ensure they match
   const getCurrentRoundItems = () => {
-    // Get all words for the current difficulty
-    const filteredWords = WORDS.filter(word => {
-      const wordLength = word.id.length;
-      return (difficulty === 1 && wordLength <= 4) ||
-             (difficulty === 2 && wordLength > 4 && wordLength <= 6) ||
-             (difficulty === 3 && wordLength > 6);
-    });
+    try {
+      // Get all words for the current difficulty
+      const filteredWords = WORDS.filter(word => {
+        const wordLength = word.id.length;
+        return (difficulty === 1 && wordLength <= 4) ||
+               (difficulty === 2 && wordLength > 4 && wordLength <= 6) ||
+               (difficulty === 3 && wordLength > 6);
+      });
 
-    // Get all matching emojis for the current difficulty
-    const filteredEmojis = EMOJIS.filter(emoji => 
-      filteredWords.some(word => word.id === emoji.wordId) && emoji.difficulty === difficulty
-    );
+      if (filteredWords.length === 0) {
+        console.warn('No words found for current difficulty');
+        return { words: [], emojis: [] };
+      }
 
-    // Create pairs of words and emojis
-    const pairs = filteredWords
-      .filter(word => filteredEmojis.some(emoji => emoji.wordId === word.id))
-      .map(word => ({
-        word,
-        emoji: filteredEmojis.find(emoji => emoji.wordId === word.id)!
-      }));
+      // Get all matching emojis for the current difficulty
+      const filteredEmojis = EMOJIS.filter(emoji => 
+        emoji.difficulty === difficulty && 
+        filteredWords.some(word => word.id === emoji.wordId)
+      );
 
-    // Shuffle the pairs and take 4 for this round
-    const shuffledPairs = shuffleArray(pairs).slice(
-      currentRound * 4,
-      (currentRound + 1) * 4
-    );
+      if (filteredEmojis.length === 0) {
+        console.warn('No emojis found for current difficulty');
+        return { words: [], emojis: [] };
+      }
 
-    return {
-      words: shuffledPairs.map(pair => pair.word),
-      emojis: shuffledPairs.map(pair => pair.emoji)
-    };
+      // Create pairs of words and emojis
+      const pairs = filteredWords
+        .filter(word => filteredEmojis.some(emoji => emoji.wordId === word.id))
+        .map(word => {
+          const matchingEmoji = filteredEmojis.find(emoji => emoji.wordId === word.id);
+          if (!matchingEmoji) return null;
+          return {
+            word,
+            emoji: matchingEmoji
+          };
+        })
+        .filter((pair): pair is { word: Word; emoji: Emoji } => pair !== null);
+
+      if (pairs.length === 0) {
+        console.warn('No valid word-emoji pairs found');
+        return { words: [], emojis: [] };
+      }
+
+      // Get 4 random pairs for this round, using currentRound as seed
+      const selectedPairs = shuffleArray(pairs).slice(0, 4);
+      
+      // Keep words in original order but shuffle emojis with a different seed
+      const words = selectedPairs.map(pair => pair.word);
+      const emojis = shuffleArray(selectedPairs.map(pair => pair.emoji));
+
+      return { words, emojis };
+    } catch (error) {
+      console.error('Error in getCurrentRoundItems:', error);
+      return { words: [], emojis: [] };
+    }
   };
 
-  // Store current round items
-  const [currentRoundItems, setCurrentRoundItems] = useState(() => getCurrentRoundItems());
+  // Initialize current round items
+  const [currentRoundItems, setCurrentRoundItems] = useState(() => {
+    const items = getCurrentRoundItems();
+    return {
+      words: items.words.map(word => ({ ...word, matched: false })),
+      emojis: items.emojis.map(emoji => ({ ...emoji, matched: false }))
+    };
+  });
 
-  // Update round items only when round or difficulty changes
+  // Update round items when round or difficulty changes
   useEffect(() => {
-    setCurrentRoundItems(getCurrentRoundItems());
+    const items = getCurrentRoundItems();
+    if (items.words.length > 0 && items.emojis.length > 0) {
+      setCurrentRoundItems({
+        words: items.words.map(word => ({ ...word, matched: false })),
+        emojis: items.emojis.map(emoji => ({ ...emoji, matched: false }))
+      });
+    }
   }, [currentRound, difficulty]);
 
   // Remove the old useEffect and direct getCurrentRoundItems call
@@ -269,6 +328,8 @@ const PhonicsGame: React.FC = () => {
     setGameStarted(true);
     setTimeLeft(getTimerDuration());
     setGameStats([]);
+    setRoundAttempts({});
+    setIncorrectWords(new Set());
     setCurrentRound(0);
     setWords(WORDS.map(word => ({ ...word, matched: false })));
     const { words: newWords, emojis: newEmojis } = getCurrentRoundItems();
@@ -317,7 +378,7 @@ const PhonicsGame: React.FC = () => {
   };
 
   const handleEmojiClick = (emojiId: string) => {
-    if (!gameStarted || !selectedWord) return; // Prevent interaction if game hasn't started
+    if (!gameStarted || !selectedWord) return;
 
     const word = currentRoundWords.find(w => w.id === selectedWord);
     const emoji = currentRoundEmojis.find(e => e.id === emojiId);
@@ -325,17 +386,7 @@ const PhonicsGame: React.FC = () => {
     if (!word || !emoji) return;
 
     const isCorrect = emoji.wordId === word.id;
-
-    // Update game stats
-    setGameStats(prev => {
-      const existingStat = prev.find(stat => stat.word === word.word);
-      if (existingStat) {
-        return prev.map(stat => 
-          stat.word === word.word ? { ...stat, attempts: stat.attempts + 1 } : stat
-        );
-      }
-      return [...prev, { word: word.word, attempts: 1 }];
-    });
+    calculateScore(isCorrect, timeLeft);
 
     if (isCorrect) {
       // Update both words and emojis state to mark them as matched
@@ -356,16 +407,47 @@ const PhonicsGame: React.FC = () => {
 
       if (allMatchedInRound) {
         if (currentRound < roundsPerLevel - 1) {
+          // Move to next round
           setCurrentRound(prev => prev + 1);
           setWords(WORDS.map(word => ({ ...word, matched: false })));
           setSelectedWord(null);
           setTimeLeft(getTimerDuration());
         } else {
-          // Game completed
+          // Game completed - update final stats
+          console.log('Incorrect words:', Array.from(incorrectWords));
+          console.log('Round attempts:', roundAttempts);
+          const finalStats = Array.from(incorrectWords).map(word => ({
+            word,
+            attempts: roundAttempts[word] || 0
+          }));
+          console.log('Final stats:', finalStats);
+          setGameStats(finalStats);
           setGameStarted(false);
         }
       }
+
+      // Random chance to show power-up
+      if (Math.random() < 0.2) { // 20% chance
+        setShowPowerUp(true);
+        setTimeout(() => setShowPowerUp(false), 2000);
+      }
     } else {
+      // Track incorrect word and its attempts - keep track even if later matched correctly
+      console.log('Adding incorrect word:', word.word);
+      setIncorrectWords(prev => {
+        const newSet = new Set([...prev, word.word]);
+        console.log('Updated incorrect words:', Array.from(newSet));
+        return newSet;
+      });
+      setRoundAttempts(prev => {
+        const newAttempts = {
+          ...prev,
+          [word.word]: (prev[word.word] || 0) + 1
+        };
+        console.log('Updated round attempts:', newAttempts);
+        return newAttempts;
+      });
+      
       setIsError(true);
       setHint(`Try matching "${word.word}" with its correct emoji`);
       setTimeout(() => {
@@ -385,6 +467,9 @@ const PhonicsGame: React.FC = () => {
     setIsError(false);
     setDifficulty(1);
     setCurrentRound(0);
+    setGameStats([]);
+    setRoundAttempts({});
+    setIncorrectWords(new Set());
   };
 
   const formatTime = (seconds: number) => {
@@ -405,6 +490,28 @@ const PhonicsGame: React.FC = () => {
   // Update victory message condition
   const shouldShowVictoryMessage = showVictoryMessage || 
     (gameStarted && currentRoundWords.every(word => words.find(w => w.id === word.id)?.matched));
+
+  // Add scoring system
+  const calculateScore = (isCorrect: boolean, timeLeft: number) => {
+    if (isCorrect) {
+      const baseScore = 100;
+      const streakBonus = Math.min(streak * 10, 50); // Max 50 bonus points for streak
+      const timeBonus = Math.floor(timeLeft / 10); // Bonus points for remaining time
+      const difficultyMultiplier = difficulty;
+      
+      const totalScore = (baseScore + streakBonus + timeBonus) * difficultyMultiplier;
+      setScore(prev => prev + totalScore);
+      setStreak(prev => prev + 1);
+      
+      // Update high score
+      if (score + totalScore > highScore) {
+        setHighScore(score + totalScore);
+        localStorage.setItem('phonicsHighScore', (score + totalScore).toString());
+      }
+    } else {
+      setStreak(0);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-primary/5 to-secondary/5 p-4">
@@ -576,17 +683,18 @@ const PhonicsGame: React.FC = () => {
               </p>
               {currentRound === roundsPerLevel - 1 && (
                 <div className="mb-6">
-                  <h3 className="text-xl font-semibold mb-2">Practice Summary</h3>
+                  <h3 className="text-xl font-semibold mb-2">Words to Practice</h3>
                   <div className="space-y-2">
-                    {gameStats
-                      .sort((a, b) => b.attempts - a.attempts)
-                      .slice(0, 5)
-                      .map((stat, index) => (
-                        <div key={index} className="flex justify-between items-center">
-                          <span className="text-gray-700">{stat.word}</span>
-                          <span className="text-gray-500">Attempts: {stat.attempts}</span>
-                        </div>
-                      ))}
+                    {gameStats.length > 0 ? (
+                      gameStats
+                        .sort((a, b) => b.attempts - a.attempts)
+                        .map((stat, index) => (
+                          <div key={index} className="flex justify-between items-center bg-gray-50 p-2 rounded">
+                            <span className="text-gray-900 font-medium">{stat.word}</span>
+                            <span className="text-red-500">Attempts: {stat.attempts}</span>
+                          </div>
+                        ))
+                    ) : null}
                   </div>
                 </div>
               )}
@@ -612,6 +720,8 @@ const PhonicsGame: React.FC = () => {
                       setSelectedWord(null);
                       setTimeLeft(getTimerDuration());
                       setGameStats([]);
+                      setRoundAttempts({});
+                      setIncorrectWords(new Set());
                     }
                   }}
                   className="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors"
